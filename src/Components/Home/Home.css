@@ -1,0 +1,13 @@
+.homeContainer {
+    height: 100vh;
+}
+
+.orderButton {
+    background-color: #00c61b;
+    border-radius: 10rem;
+}
+
+.Button {
+    background-color: green;
+    border-radius: 10rem;
+}

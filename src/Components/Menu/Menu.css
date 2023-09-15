@@ -1,0 +1,20 @@
+.menuContainer {
+    min-height: 100vh;
+}
+
+.menuLogo {
+    background-color: #4b4a4f;
+    border-radius: 100%;
+    /* width: fit-content; */
+}
+
+.Link {
+    color: white;
+    text-decoration: none;
+}
+
+.countItemBtn {
+    border: 1px solid #00c61b;
+    color: #00c61b;
+    cursor: pointer;
+}

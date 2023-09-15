@@ -1,0 +1,12 @@
+.paymentContainer {
+    min-height: 100vh;
+}
+
+.menuLogo {
+    background-color: #4b4a4f;
+    border-radius: 100%;
+}
+
+.paymentMethods {
+    max-width: 25rem;
+}
