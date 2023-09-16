@@ -5,7 +5,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #16151b;
 }
 
 code {
@@ -21,10 +20,17 @@ code {
   background-color: #16151b;
 }
 
+.textPrimary {
+  color: #00c61b;
+}
+
 .bg_Success {
   background-color: #00c61b;
 }
 
+.bg_LightDark {
+  background-color: #28272f;;
+}
 
 
 

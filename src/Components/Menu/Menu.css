@@ -1,11 +1,10 @@
-.menuContainer {
-    min-height: 100vh;
+body {
+    background-color: #16151b;
 }
 
 .menuLogo {
     background-color: #4b4a4f;
     border-radius: 100%;
-    /* width: fit-content; */
 }
 
 .Link {

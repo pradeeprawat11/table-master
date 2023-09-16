@@ -1,5 +1,5 @@
-.paymentContainer {
-    min-height: 100vh;
+body {
+    background-color: #16151b;
 }
 
 .menuLogo {
@@ -8,5 +8,9 @@
 }
 
 .paymentMethods {
-    max-width: 25rem;
+    max-width: 20rem;
+}
+
+.paymentLogo{
+    width: 2rem;
 }
