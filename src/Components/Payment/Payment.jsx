@@ -14,7 +14,7 @@ const Payment = () => {
   
   return (
     <>
-      <Container className='paymentContainer bg_Dark p-0 m-0' fluid>
+      <Container className='paymentContainer bg_Dark p-0 m-0 h-100' fluid>
         <div className='d-flex text-light align-items-center py-2'>
           <Link to="/menu" className='text-light'>
             <div className='menuLogo d-flex align-items-center mx-3 p-2'>
@@ -25,7 +25,7 @@ const Payment = () => {
             <h4 className='m-0'>Digital Menu</h4>
           </div>
         </div>
-        <Row className='text-light d-flex justify-content-center align-items-center p-3'>
+        <Row className='text-light d-flex justify-content-center align-items-center p-3 m-0'>
           <Form className='paymentMethods w-100 p-0'>
             {cardPayment.map((cardPayment, index) => (
                 <div key={index} className='paymentOption bg_LightDark  d-flex justify-content-between p-2 my-2'>
@@ -71,7 +71,7 @@ const Payment = () => {
                   </div>
                 </div>
             ))}
-            <button className='bg_Success w-100 border-0 text-light p-2 px-5'>Next</button>
+            <button className='bg_Success w-100 border-0 text-light p-2 px-5 mt-5'>Next</button>
           </Form>
         </Row>
       </Container>

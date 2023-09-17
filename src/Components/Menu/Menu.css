@@ -17,3 +17,39 @@ body {
     color: #00c61b;
     cursor: pointer;
 }
+
+.col1{
+    width: 5rem;
+}
+
+.addBtn{
+    width: 5rem;
+} 
+
+.cardImage {
+    object-fit: cover;
+}
+
+@media (max-width: 576px) {
+    .imageContainer {
+        object-fit: cover;
+        height: 5rem;
+        width: 5rem;
+    }
+
+    .cardImage {
+        border-radius: 5px;
+    }
+
+    .itemDetailContainer h6 {
+        padding: 0;
+        margin: 0;
+    }
+    .itemDetailContainer p {
+        padding: 0;
+        margin: 0;
+    }
+    .cardContainer {
+        background-color: transparent;
+    }
+}
