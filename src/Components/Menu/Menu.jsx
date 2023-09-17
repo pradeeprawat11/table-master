@@ -120,7 +120,7 @@ const Menu = () => {
         </Row> */}
         <Row className='p-0 m-0 mt-3 px-2'>
         {menuList.map((menuList, index) => (
-          <Col className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
+          <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
             <Row className='cardContainer rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
               <Col className='m-0 p-0 d-flex justify-content-center align-items-center' xs={3} sm={12}>
                 <div className='imageContainer'>
