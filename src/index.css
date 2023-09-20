@@ -32,6 +32,25 @@ code {
   background-color: #28272f;;
 }
 
+.primaryButton {
+  /* bg_Success w-100 border-0 text-light p-2 px-5 */
+  background-color: #00c61b;
+  width: 100%;
+  border: 0px;
+  color: white;
+  padding: 2%;
+  padding-left: 2%;
+  padding-right: 2%;
+}
 
+.colorLightGray {
+  color: #919199;
+}
 
-
+.bottomButton {
+  position: absolute;
+  bottom: 0;
+  max-width: 20rem;
+  left: auto;
+  right: inherit;
+}

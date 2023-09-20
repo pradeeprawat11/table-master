@@ -71,7 +71,7 @@ const Payment = () => {
                   </div>
                 </div>
             ))}
-            <button className='bg_Success w-100 border-0 text-light p-2 px-5 mt-5'>Next</button>
+            <Link to="/orderPlaced"><button className='bg_Success w-100 border-0 text-light p-2 px-5 mt-5'>Next</button></Link>
           </Form>
         </Row>
       </Container>

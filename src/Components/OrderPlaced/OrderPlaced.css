@@ -1,0 +1,11 @@
+.orderPlacedContainer {
+    height: 100vh;
+}
+
+.orderPlacedDetails {
+    max-width: 20rem;
+}
+
+.borderRounded {
+    border-radius: 100%;
+}

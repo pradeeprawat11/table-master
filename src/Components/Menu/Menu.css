@@ -29,7 +29,7 @@ body {
 .cardImage {
     object-fit: cover;
 }
-
+ 
 @media (max-width: 576px) {
     .imageContainer {
         object-fit: cover;
@@ -49,7 +49,7 @@ body {
         padding: 0;
         margin: 0;
     }
-    .cardContainer {
+    .cardDetailContainer {
         background-color: transparent;
     }
 }
