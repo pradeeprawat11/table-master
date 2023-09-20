@@ -13,6 +13,7 @@ function App() {
           <Route path='menu' element={<Menu />} />
           <Route path='payment' element={<Payment />} />
           <Route path='orderPlaced' element={<OrderPlaced />} />
+          <Route path='*' element={<Home />} />
         </Routes>
       </BrowserRouter>
   );
