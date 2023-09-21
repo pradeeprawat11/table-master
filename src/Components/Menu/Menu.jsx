@@ -30,7 +30,7 @@ const Menu = () => {
         setLoading(true)
       })
 
-      const storedArray = localStorage.getItem('myArray');
+      const storedArray = localStorage.getItem('localArray');
       if (storedArray) {
         setItemCount(JSON.parse(storedArray));
       }
@@ -45,7 +45,7 @@ const Menu = () => {
     const updatedArray = [...itemCount];
     updatedArray[index] += 1;
     setItemCount(updatedArray);
-    localStorage.setItem('myArray', JSON.stringify(updatedArray));
+    localStorage.setItem('localArray', JSON.stringify(updatedArray));
   }
 
   // Function to decrement the value at a specific index
@@ -53,19 +53,19 @@ const Menu = () => {
     const updatedArray = [...itemCount];
     updatedArray[index] -= 1;
     setItemCount(updatedArray);
-    localStorage.setItem('myArray', JSON.stringify(updatedArray));
+    localStorage.setItem('localArray', JSON.stringify(updatedArray));
   };
 
   const clearItems = () => {
     const updatedArray = Array(itemCount.length).fill(0);
     setItemCount(updatedArray);
-    localStorage.setItem('myArray', JSON.stringify(updatedArray));
+    localStorage.setItem('localArray', JSON.stringify(updatedArray));
   };
 
    // Function to delete the stored array from localStorage
    const cancelOrder = () => {
     clearItems();
-    localStorage.removeItem('myArray');
+    localStorage.removeItem('localArray');
   };
 
   function callAPI() {
@@ -129,18 +129,18 @@ const Menu = () => {
         :
         <>
         <Row className='cardContainer p-0 m-0 mt-3 px-2'>
-        {data.slice(0,10).map((data, index) => (
+        {data.slice(0,20).map((data, index) => (
           <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
-            <Row className='cardDetailContainer rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
+            <Row className='cardDetailContainer h-100 rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
               <Col className='m-0 p-0 d-flex justify-content-center align-items-center' xs={3} sm={12}>
                 <div className='imageContainer'>
                   <Image className='cardImage w-100 h-100' src="https://howtostartanllc.com/images/business-ideas/business-idea-images/fast-food.jpg"/>
                 </div>
               </Col>
               <Col className='itemDetailContainer' xs={6} sm={12}>
-                  <h6 className='p-0 m-0'>{(`${data.name}`).toLowerCase()}</h6>
+                  <h5 className='p-0 m-0'>{(`${data.name}`).toLowerCase()}</h5>
                   <p className='p-0 m-0'>€{(`${data.price}`).toLowerCase()}</p>
-                  <p className='p-0 m-0'>{(`${data.description}`).toLowerCase()}</p>
+                  <p className='p-0 m-0 colorLightGray'>{(`${data.description}`).toLowerCase()}</p>
               </Col>
               <Col className='py-3' xs={3} sm={12}>
                 {
