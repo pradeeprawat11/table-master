@@ -71,13 +71,13 @@ const Menu = () => {
   function callAPI() {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
-
-    var raw = JSON.stringify({
-      "assetId": "6502fd62e0ae56858959419e",
-      "menu": [
-        `${items}`
-      ]
-    });
+    console.log('Items', items)
+    const menu = items
+    var raw = {
+      assetId: '6502fd62e0ae56858959419e',
+      menu
+    }
+    console.log('Raw data', raw)
 
     var requestOptions = {
       method: 'POST',
@@ -92,7 +92,7 @@ const Menu = () => {
   .catch(error => console.log('error', error));
 }
 
-  const items = []
+  const items = [];
   function pushSelectedItems() {
     itemCount.map(function (count, i) {
       if(itemCount[i]>0){
@@ -105,6 +105,7 @@ const Menu = () => {
   const placeOrder = () => {
     pushSelectedItems()
     callAPI()
+    // console.log(items)
     clearItems()
   }
 
@@ -129,7 +130,7 @@ const Menu = () => {
         :
         <>
         <Row className='cardContainer p-0 m-0 mt-3 px-2'>
-        {data.map((data, index) => (
+        {data.slice(0,5).map((data, index) => (
           <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
             <Row className='cardDetailContainer h-100 rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
               <Col className='m-0 p-0 d-flex justify-content-center align-items-center' xs={3} sm={12}>
