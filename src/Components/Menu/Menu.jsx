@@ -4,6 +4,7 @@ import '../../index.css'
 import { Link } from 'react-router-dom'
 import { Container, Row, Col, Image} from 'react-bootstrap'
 import {LiaLessThanSolid} from 'react-icons/lia'
+import axios from 'axios'
 
 const Menu = () => {
 
@@ -68,30 +69,6 @@ const Menu = () => {
     localStorage.removeItem('localArray');
   };
 
-  function callAPI() {
-    var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    console.log('Items', items)
-    const menu = items
-    var raw = {
-      assetId: '6502fd62e0ae56858959419e',
-      menu
-    }
-    console.log('Raw data', raw)
-
-    var requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: raw,
-      redirect: 'follow'
-    };
-
-  fetch("http://194.163.149.48:3002/reservation", requestOptions)
-  .then(response => response.text())
-  .then(result => console.log(result))
-  .catch(error => console.log('error', error));
-}
-
   const items = [];
   function pushSelectedItems() {
     itemCount.map(function (count, i) {
@@ -102,10 +79,35 @@ const Menu = () => {
     });
   }
 
+  function callAxiosAPI() {
+
+    let dataApi = JSON.stringify({
+      "assetId": `${localStorage.getItem('assetId')}`,
+      "menu": items
+    });
+
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://194.163.149.48:3002/reservation',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: dataApi
+    };
+
+    axios.request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   const placeOrder = () => {
     pushSelectedItems()
-    callAPI()
-    // console.log(items)
+    callAxiosAPI()
     clearItems()
   }
 
