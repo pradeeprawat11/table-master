@@ -1,8 +1,8 @@
 import {React, useState, useEffect} from 'react'
 import './Menu.css'
 import '../../index.css'
-import { Link, useParams } from 'react-router-dom'
-import { Container, Row, Col, Card, Image} from 'react-bootstrap'
+import { Link } from 'react-router-dom'
+import { Container, Row, Col, Image} from 'react-bootstrap'
 import {LiaLessThanSolid} from 'react-icons/lia'
 
 const Menu = () => {
@@ -34,6 +34,7 @@ const Menu = () => {
       if (storedArray) {
         setItemCount(JSON.parse(storedArray));
       }
+      console.log(itemCount)
   }, [])
 
 
@@ -99,7 +100,7 @@ const Menu = () => {
         const item = {menuId:`${data[i]._id}`,quantity:parseInt(`${itemCount[i]}`)}
         items.push(item)
       }
-    });
+    } ());
   }
 
   const placeOrder = () => {
@@ -129,7 +130,7 @@ const Menu = () => {
         :
         <>
         <Row className='cardContainer p-0 m-0 mt-3 px-2'>
-        {data.slice(0,20).map((data, index) => (
+        {data.map((data, index) => (
           <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
             <Row className='cardDetailContainer h-100 rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
               <Col className='m-0 p-0 d-flex justify-content-center align-items-center' xs={3} sm={12}>
