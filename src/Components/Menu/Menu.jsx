@@ -34,7 +34,6 @@ const Menu = () => {
       if (storedArray) {
         setItemCount(JSON.parse(storedArray));
       }
-      console.log(itemCount)
   }, [])
 
 
