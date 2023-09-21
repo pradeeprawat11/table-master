@@ -88,7 +88,7 @@ const Menu = () => {
 
   fetch("http://194.163.149.48:3002/reservation", requestOptions)
   .then(response => response.text())
-  // .then(result => console.log(result))
+  .then(result => console.log(result))
   .catch(error => console.log('error', error));
 }
 
@@ -99,7 +99,7 @@ const Menu = () => {
         const item = {menuId:`${data[i]._id}`,quantity:parseInt(`${itemCount[i]}`)}
         items.push(item)
       }
-    } ());
+    });
   }
 
   const placeOrder = () => {
