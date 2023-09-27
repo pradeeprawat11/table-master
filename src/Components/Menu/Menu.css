@@ -33,6 +33,11 @@ body {
 .cardImage {
     object-fit: cover;
 }
+
+.categoryDropdown {
+    background: none;
+    /* background-color: transparent; */
+}
  
 @media (max-width: 576px) {
     .imageContainer {

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Menu.css'
 import '../../index.css'
 import { Link } from 'react-router-dom'
-import { Container, Row, Col, Image } from 'react-bootstrap'
+import { Container, Row, Col, Image, Dropdown } from 'react-bootstrap'
 import { LiaLessThanSolid } from 'react-icons/lia'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
@@ -14,18 +14,31 @@ const Menu = (props) => {
   const [itemCount, setItemCount] = useState([])
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState([])
+  const [category, setCategory] = useState([]);
+  const [categoryLoading, setCategoryLoading] = useState(true)
+  const [selectedCategory, setSelectedCategory] = useState()
+
   const navigate = useNavigate();
   const queryParameters = new URLSearchParams(window.location.search)
   const assetId = queryParameters.get("assetId")
 
   const fetchData = async () => {
-    const response = await fetch('http://194.163.149.48:3002/admin/menu/get-menu?pageNo=1&size=10')
+    const response = await fetch('http://194.163.149.48:3002/admin/menu/get-menu?pageNo=1&size=100')
     if (!response.ok) {
       throw new Error('Data coud not be fetched!')
     } else {
       return response.json()
     }
   }
+  const fetchCategory = async () => {
+    const response = await fetch('http://194.163.149.48:3002/admin/item-category')
+    if (!response.ok) {
+      throw new Error('Data coud not be fetched!')
+    } else {
+      return response.json()
+    }
+  }
+
   useEffect(() => {
     fetchData()
       .then((res) => {
@@ -36,13 +49,22 @@ const Menu = (props) => {
         console.log(e.message)
         setLoading(true)
       })
+    
+    fetchCategory()
+      .then((res) => {
+        setCategory(res.data); // Update the state with the fetched data
+        setCategoryLoading(false); // Set loading to false
+      })
+      .catch((error) => {
+        console.error('There was a problem with the fetch operation:', error);
+        setCategoryLoading(true); // Set loading to false in case of an error
+      });
 
     const storedArray = localStorage.getItem('localArray');
     if (storedArray) {
       setItemCount(JSON.parse(storedArray));
     }
   }, [])
-
 
   if (data.length && !itemCount.length) {
     setItemCount(Array(data.length).fill(0));
@@ -135,6 +157,31 @@ const Menu = (props) => {
           <div>
             <h4 className='m-0'>Room Eats Menu</h4>
           </div>
+          <div>
+            <Dropdown className=''>
+              <Dropdown.Toggle id="categoryDropdown dropdown-basic">
+                Category
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {
+                  categoryLoading 
+                  ?
+                  <p>Loading...</p>
+                  :
+                  <>
+                    {category.map((category, index)=>(
+                      <>
+                        <Dropdown.Item onClick={()=> setSelectedCategory(category._id)}>{category.name}</Dropdown.Item>
+                      </>
+                    ))}
+                  </>
+                }
+              </Dropdown.Menu>
+          </Dropdown>
+          </div>
+          <div>
+           <input></input>  search
+          </div>
         </div>
         <ToastContainer
           position='top-right'
@@ -155,7 +202,11 @@ const Menu = (props) => {
             :
             <>
               <Row className='cardContainer p-0 m-0 mt-3 px-2'>
-                {data.map((data, index) => (
+                {data.map((data, index) =>(
+                  <>
+                    {
+                    selectedCategory === data.categoryId
+                    ?
                   <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
                     <Row className='cardDetailContainer h-100 rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
                       <Col className='m-0 p-0 d-flex justify-content-center align-items-center' xs={3} sm={12}>
@@ -192,6 +243,10 @@ const Menu = (props) => {
                       </Col>
                     </Row>
                   </Col>
+                  :
+                  <></>
+                  }
+                  </>
                 ))}
               </Row>
               <div className='d-flex justify-content-center py-5' varient="bottom">
