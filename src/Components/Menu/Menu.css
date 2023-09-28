@@ -38,6 +38,17 @@ body {
     background: none;
     /* background-color: transparent; */
 }
+
+input {
+    background-color: rgba(0, 0, 0, 0.279);
+    border: none;
+    color: white;
+    width: 100%;
+}
+input:focus {
+    border: none;
+    outline: none;
+}
  
 @media (max-width: 576px) {
     .imageContainer {

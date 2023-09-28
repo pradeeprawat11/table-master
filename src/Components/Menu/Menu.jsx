@@ -16,21 +16,39 @@ const Menu = (props) => {
   const [data, setData] = useState([])
   const [category, setCategory] = useState([]);
   const [categoryLoading, setCategoryLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState()
+  const [selectedCategoryName, setSelectedCategoryName] = useState('Category')
+  const [menuApiItems, setMenuApiItems] = useState(10)
+  const [orderItems, setOrderItems] = useState([])
+  const [itemInstruction, setItemInstruction] = useState([])
+
 
   const navigate = useNavigate();
   const queryParameters = new URLSearchParams(window.location.search)
   const assetId = queryParameters.get("assetId")
 
   const fetchData = async () => {
-    const response = await fetch('http://194.163.149.48:3002/admin/menu/get-menu?pageNo=1&size=100')
+    // console.log('fetch data calling')
+    const response = await fetch(`http://194.163.149.48:3002/admin/menu/get-menu?pageNo=1&size=${menuApiItems}`)
+    // console.log(menuApiItems)
     if (!response.ok) {
       throw new Error('Data coud not be fetched!')
     } else {
       return response.json()
     }
   }
+  const fetchMenuByCategoryId = async (id) => {
+    // console.log('fetchMenuByCategoryId calling')
+    const response = await fetch(`http://194.163.149.48:3002/admin/menu/get-menu?pageNo=1&size=10&categoryId=${id}`)
+    // console.log('Id while calling api', id)
+    if (!response.ok) {
+      throw new Error('Data coud not be fetched!')
+    } else {
+      return response.json()
+    }
+  }
+
   const fetchCategory = async () => {
+    // console.log('fetchCategory calling')
     const response = await fetch('http://194.163.149.48:3002/admin/item-category')
     if (!response.ok) {
       throw new Error('Data coud not be fetched!')
@@ -40,6 +58,7 @@ const Menu = (props) => {
   }
 
   useEffect(() => {
+    // console.group('UseEffect Calling')
     fetchData()
       .then((res) => {
         setData(res.data)
@@ -60,30 +79,37 @@ const Menu = (props) => {
         setCategoryLoading(true); // Set loading to false in case of an error
       });
 
-    const storedArray = localStorage.getItem('localArray');
-    if (storedArray) {
-      setItemCount(JSON.parse(storedArray));
-    }
+      const storedArray = localStorage.getItem('localArray');
+      if (storedArray) {
+        setItemCount(JSON.parse(storedArray));
+      } 
+
+      if (data.length && !itemInstruction.length) {
+        setItemInstruction(Array(data.length).fill(''));
+      }
+
   }, [])
+
+  
 
   if (data.length && !itemCount.length) {
     setItemCount(Array(data.length).fill(0));
   }
 
-  const incrementAtIndex = (index) => {
-    const updatedArray = [...itemCount];
-    updatedArray[index] += 1;
-    setItemCount(updatedArray);
-    localStorage.setItem('localArray', JSON.stringify(updatedArray));
-  }
+  // const incrementAtIndex = (index) => {
+  //   const updatedArray = [...itemCount];
+  //   updatedArray[index] += 1;
+  //   setItemCount(updatedArray);
+  //   localStorage.setItem('localArray', JSON.stringify(updatedArray));
+  // }
 
   // Function to decrement the value at a specific index
-  const decrementAtIndex = (index) => {
-    const updatedArray = [...itemCount];
-    updatedArray[index] -= 1;
-    setItemCount(updatedArray);
-    localStorage.setItem('localArray', JSON.stringify(updatedArray));
-  };
+  // const decrementAtIndex = (index) => {
+  //   const updatedArray = [...itemCount];
+  //   updatedArray[index] -= 1;
+  //   setItemCount(updatedArray);
+  //   localStorage.setItem('localArray', JSON.stringify(updatedArray));
+  // };
 
   const clearItems = () => {
     const updatedArray = Array(itemCount.length).fill(0);
@@ -97,22 +123,13 @@ const Menu = (props) => {
     localStorage.removeItem('localArray');
   };
 
-  const items = [];
-  function pushSelectedItems() {
-    itemCount.map(function (count, i) {
-      if (itemCount[i] > 0) {
-        const item = { menuId: `${data[i]._id}`, quantity: parseInt(`${itemCount[i]}`) }
-        items.push(item)
-      }
-    });
-  }
-
   function callAxiosAPI() {
-
     let dataApi = JSON.stringify({
       "assetId": `${assetId}`,
-      "menu": items
+      "menu": orderItems
     });
+
+    // console.log(orderItems)
 
     let config = {
       method: 'post',
@@ -123,6 +140,8 @@ const Menu = (props) => {
       },
       data: dataApi
     };
+
+    // console.log(dataApi)
 
     axios.request(config)
       .then((response) => {
@@ -139,12 +158,144 @@ const Menu = (props) => {
       });
   }
 
+  // Place Order
   const placeOrder = () => {
-    pushSelectedItems()
+    // pushSelectedItems()
     callAxiosAPI()
     clearItems()
   }
 
+  const viewMore = () => {
+    setMenuApiItems(menuApiItems+10)
+    // console.log(menuApiItems)
+    // const val = menuApiItems + 10;
+    // console.log('viewmoe', menuApiItems)
+    fetchData()
+      .then((res) => {
+        setData(res.data)
+      })
+      .catch((e) => {
+        console.log(e.message)
+        setLoading(true)
+      })
+  }
+
+  // setCategory by id
+  function showMenuByCategory(category) {
+    if(category==='All') {
+      setSelectedCategoryName('Category')
+      // console.log('selected category', category)
+      fetchData()
+      .then((res) => {
+        setData(res.data)
+      })
+      .catch((e) => {
+        console.log(e.message)
+        setLoading(true)
+      })
+    }
+    else{
+      setSelectedCategoryName(category.name)
+      // console.log('selected category', category._id)
+      fetchMenuByCategoryId(category._id)
+      .then((res) => {
+          setData(res.data)
+        })
+        .catch((error) => {
+          console.error('There was a problem with the fetch operation:', error);
+          setCategoryLoading(true); // Set loading to false in case of an error
+        });
+    }
+    setItemInstruction(Array(data.length).fill(''));
+  }
+
+  // keep input
+  const handleItemInstruction = (itemId, index, newValue) => {
+    const updatedValues = [...itemInstruction];
+    updatedValues[index] = newValue;
+    setItemInstruction(updatedValues);
+    addInstruction(itemId, index)
+  };
+
+  // Order Section
+  // create array of objects
+  // 1. Add items
+  function addItem(item, index) {
+    orderItems.push({menuId: `${item._id}`, quantity: parseInt(`${'1'}`), description: itemInstruction[index]})
+    setOrderItems([...orderItems])
+  }
+  
+  // 2. Remove Item
+  function removeItem(itemId) {
+    // Find the index of the item to remove
+    const indexToRemove = orderItems.findIndex(item => item.menuId === itemId);
+    // console.log('remove index', indexToRemove)
+    // Check if the item exists in the array
+    if (indexToRemove !== -1) {
+      // Use splice to remove the item from the copied array
+      const updated = orderItems.splice(indexToRemove, 1);
+      setOrderItems(updated);
+      // console.log('order item', orderItems)
+    }
+  }
+
+  // 3. increase Item
+  function increaseItem(itemId) {
+    for (const item of orderItems) {
+      if (item.menuId === itemId) {
+        // If the object's id matches the target id, update the specified property
+        item.quantity = item.quantity+1; // Update the 'name' property
+      }
+    }
+    setOrderItems([...orderItems])
+  }
+
+  // 4. reduce Item
+  function reduceItem(itemId) {
+    for (const item of orderItems) {
+      if (item.menuId === itemId) {
+        // If the object's id matches the target id, update the specified property
+        item.quantity = item.quantity-1; // Update the 'name' property
+        console.log('item quantity', item.quantity)
+        if(item.quantity===0) {
+          removeItem(itemId)
+        }
+      }
+    }
+    setOrderItems([...orderItems])
+  }
+
+  // 5. Find Item
+  function findItem(itemId) {
+    for (const item of orderItems) {
+      if (item.menuId === itemId) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // 6. Get Index
+  function getQuantity(itemId)  {
+    for (const item of orderItems) {
+      if (item.menuId === itemId) {
+        // If the object's id matches the target id, update the specified property
+        return item.quantity // Update the 'name' property
+      }
+    }
+  }
+
+  // 7. Add Instruction
+  function addInstruction(itemId, index) {
+    for (const item of orderItems) {
+      if (item.menuId === itemId) {
+        // If the object's id matches the target id, update the specified property
+        item.description = itemInstruction[index]; // Update the 'name' property
+      }
+    }
+  }
+
+  console.log('Order Items ', orderItems)
   return (
     <>
       <Container className='menuContainer text-light bg_Dark p-0 d-xs-flex' fluid>
@@ -158,11 +309,12 @@ const Menu = (props) => {
             <h4 className='m-0'>Room Eats Menu</h4>
           </div>
           <div>
-            <Dropdown className=''>
-              <Dropdown.Toggle id="categoryDropdown dropdown-basic">
-                Category
+            <Dropdown className='bg-none'>
+              <Dropdown.Toggle variant='success' className="categoryDropdown dropdown-basic bg-none border-success p-1 mx-2">
+                {selectedCategoryName}
               </Dropdown.Toggle>
               <Dropdown.Menu>
+                <Dropdown.Item onClick={()=> showMenuByCategory('All')}>All</Dropdown.Item>
                 {
                   categoryLoading 
                   ?
@@ -171,16 +323,13 @@ const Menu = (props) => {
                   <>
                     {category.map((category, index)=>(
                       <>
-                        <Dropdown.Item onClick={()=> setSelectedCategory(category._id)}>{category.name}</Dropdown.Item>
+                        <Dropdown.Item onClick={()=> showMenuByCategory(category)}>{category.name}</Dropdown.Item>
                       </>
                     ))}
                   </>
                 }
               </Dropdown.Menu>
           </Dropdown>
-          </div>
-          <div>
-           <input></input>  search
           </div>
         </div>
         <ToastContainer
@@ -203,10 +352,6 @@ const Menu = (props) => {
             <>
               <Row className='cardContainer p-0 m-0 mt-3 px-2'>
                 {data.map((data, index) =>(
-                  <>
-                    {
-                    selectedCategory === data.categoryId
-                    ?
                   <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
                     <Row className='cardDetailContainer h-100 rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
                       <Col className='m-0 p-0 d-flex justify-content-center align-items-center' xs={3} sm={12}>
@@ -218,37 +363,43 @@ const Menu = (props) => {
                         <h5 className='p-0 m-0'>{(`${data.name}`).toLowerCase()}</h5>
                         <p className='p-0 m-0'>€{(`${data.price}`).toLowerCase()}</p>
                         <p className='p-0 m-0 colorLightGray'>{(`${data.description}`).toLowerCase()}</p>
+                        <input
+                          type="text"
+                          value={itemInstruction[index]}
+                          onChange={(e) => handleItemInstruction(data._id, index, e.target.value)}
+                          placeholder="Add Instruction"
+                        />
                       </Col>
                       <Col className='py-3' xs={3} sm={12}>
                         {
-                          ((itemCount[index] === 0)
+                          (
+                            (findItem(data._id) && getQuantity(data._id)>0)
                             ?
-                            (<div className='bg_Success countItemBtn text-light text-center' onClick={() => incrementAtIndex(index, data.price)}>
-                              +
-                            </div>)
-                            :
-                            (<div className='countItemBtn d-flex justify-content-evenly'>
-                              <div className='minusBtn' onClick={() => decrementAtIndex(index)} >
+                            <div className='countItemBtn d-flex justify-content-evenly'>
+                              <div className='minusBtn' onClick={() => reduceItem(data._id)} >
                                 -
                               </div>
                               <div>
-                                {itemCount[index]}
+                              {getQuantity(data._id)}
                               </div>
-                              <div onClick={() => incrementAtIndex(index, data.price)}>
+                              <div onClick={() => increaseItem(data._id)}>
                                 +
                               </div>
-                            </div>)
+                            </div>
+                            :
+                            <div className='bg_Success countItemBtn text-light text-center' onClick={() => addItem(data, index)}>
+                                +
+                            </div>
                           )
                         }
                       </Col>
                     </Row>
                   </Col>
-                  :
-                  <></>
-                  }
-                  </>
                 ))}
               </Row>
+              <div className='d-flex justify-content-center text-center'>
+                <p onClick={()=>viewMore()}>view more</p>
+              </div>
               <div className='d-flex justify-content-center py-5' varient="bottom">
                 <Link to="/"> <button onClick={() => cancelOrder()} className='bg-danger border-danger countItemBtn text-light text-center'>Cancel Order</button> </Link>
                 <button onClick={() => clearItems()} className='bg-primary countItemBtn text-light border-primary text-center mx-3'>Clear Items</button>
@@ -256,6 +407,7 @@ const Menu = (props) => {
               </div>
             </>
         }
+        
       </Container >
     </>
   )
