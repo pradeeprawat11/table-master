@@ -20,7 +20,7 @@ const Menu = (props) => {
   const [selectedCategoryId, setSelectedCategoryId] = useState();
   const [orderItems, setOrderItems] = useState([])
   const [itemInstruction, setItemInstruction] = useState([])
-  const [menuItemCount, setMenuItemCount] = useState(10)
+  const [menuItemCount, setMenuItemCount] = useState(1)
   const [menuItemPage, setMenuItemPage] = useState(1)
   const [categoryItemPage, setCategoryItemPage] = useState(1)
 
@@ -39,7 +39,6 @@ const Menu = (props) => {
     }
   }
   const fetchMenuByCategoryId = async (id, page) => {
-    console.log('calling for page', page)
     const response = await fetch(`http://194.163.149.48:3002/admin/menu/get-menu?pageNo=${page}&size=10&categoryId=${id}`)
     if (!response.ok) {
       throw new Error('Data coud not be fetched!')
@@ -148,21 +147,15 @@ const Menu = (props) => {
       });
   }
   
-  // Load more Items
-  const loadMoreItems = () => {
-    setMenuItemCount(menuItemCount + 10); // Increase the count by 10 to fetch more items
-    fetchMenuItem(); // Fetch the additional items
-  };
-
   // setCategory by id
   function showMenuByCategory(category) {
-    
+    setCategoryItemPage(1)
     if(category==='All') {
       setSelectedCategoryName('Category')
       fetchMenuItem()
     }
     else{
-      setCategoryItemPage(()=> 1)
+      
       setSelectedCategoryName(category.name)
       setSelectedCategoryId(category._id)
       // console.log('selected category', category._id)
@@ -191,7 +184,6 @@ const Menu = (props) => {
 
     setOrderItems(newupdatedValues)
     localStorage.setItem('localItems', JSON.stringify(orderItems));
-    console.log(itemInstruction[index])
   };
   
   // Order Section
@@ -274,16 +266,6 @@ const Menu = (props) => {
     }
   }
 
-  // 7. Add Instruction
-  // function addInstruction(itemId, index) {
-  //   for (const item of orderItems) {
-  //     if (item.menuId === itemId) {
-  //       // If the object's id matches the target id, update the specified property
-  //       item.description = itemInstruction[index]; // Update the 'name' property
-  //     }
-  //   }
-  // }
-
   // Place Order
   const placeOrder = () => {
     callAxiosAPI()
@@ -293,7 +275,7 @@ const Menu = (props) => {
   // Paggination
   const loadNextMenuPage = () => {
     const newPage = menuItemPage+1;
-    setMenuItemPage(menuItemPage+1)
+    setMenuItemPage(newPage)
     fetchData(newPage)
       .then((res) => {
         if(res.data.length>0) {
@@ -308,7 +290,8 @@ const Menu = (props) => {
   }
   const loadNextCategoryPage = () => {
     const newPage = categoryItemPage+1
-    setCategoryItemPage(categoryItemPage+1)
+    setCategoryItemPage(newPage)
+    console.log('new page', newPage)
     fetchMenuByCategoryId(selectedCategoryId, newPage)
       .then((res) => {
         if(res.data.length>0) {
@@ -425,10 +408,13 @@ const Menu = (props) => {
                 ))}
               </Row>
               <div className='d-flex justify-content-center text-center'>
-                {(selectedCategoryName === 'Category') ?
-                  <Button onClick={()=>loadNextMenuPage()}>View More Menu</Button>
+                { (menuItems.length>0) ? ((selectedCategoryName === 'Category') ?
+                    <Button onClick={()=>loadNextMenuPage()}>View More</Button>
+                    :
+                    <Button onClick={()=>loadNextCategoryPage()}>View More</Button>
+                  )
                   :
-                  <Button onClick={()=>loadNextCategoryPage()}>View More Category</Button>
+                  <h3>No Items</h3>
                 }
               </div>
               <div className='d-flex justify-content-center py-5' varient="bottom">
@@ -438,7 +424,6 @@ const Menu = (props) => {
               </div>
             </>
         }
-        
       </Container >
     </>
   )

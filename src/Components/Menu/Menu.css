@@ -40,6 +40,7 @@ body {
 }
 
 input {
+    font-weight: 500;
     padding-left: 10px;
     border-radius: 5px;
     background-color: rgba(0, 0, 0, 0.781);
