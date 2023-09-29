@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Menu.css'
 import '../../index.css'
 import { Link } from 'react-router-dom'
-import { Container, Row, Col, Image, Dropdown } from 'react-bootstrap'
+import { Container, Row, Col, Image, Dropdown, Button } from 'react-bootstrap'
 import { LiaLessThanSolid } from 'react-icons/lia'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
@@ -11,24 +11,26 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Menu = (props) => {
 
-  const [itemCount, setItemCount] = useState([])
   const [loading, setLoading] = useState(true)
-  const [data, setData] = useState([])
+  const [menuItems, setData] = useState([])
   const [category, setCategory] = useState([]);
+  const [categoryPages, setCategoryPages] = useState([])
   const [categoryLoading, setCategoryLoading] = useState(true)
   const [selectedCategoryName, setSelectedCategoryName] = useState('Category')
-  const [menuApiItems, setMenuApiItems] = useState(10)
+  const [selectedCategoryId, setSelectedCategoryId] = useState();
   const [orderItems, setOrderItems] = useState([])
   const [itemInstruction, setItemInstruction] = useState([])
-
+  const [menuItemCount, setMenuItemCount] = useState(10)
+  const [menuItemPage, setMenuItemPage] = useState(1)
+  const [categoryItemPage, setCategoryItemPage] = useState(1)
 
   const navigate = useNavigate();
   const queryParameters = new URLSearchParams(window.location.search)
   const assetId = queryParameters.get("assetId")
 
-  const fetchData = async () => {
+  const fetchData = async (page) => {
     // console.log('fetch data calling')
-    const response = await fetch(`http://194.163.149.48:3002/admin/menu/get-menu?pageNo=1&size=${menuApiItems}`)
+    const response = await fetch(`http://194.163.149.48:3002/admin/menu/get-menu?pageNo=${page}&size=10`)
     // console.log(menuApiItems)
     if (!response.ok) {
       throw new Error('Data coud not be fetched!')
@@ -36,10 +38,9 @@ const Menu = (props) => {
       return response.json()
     }
   }
-  const fetchMenuByCategoryId = async (id) => {
-    // console.log('fetchMenuByCategoryId calling')
-    const response = await fetch(`http://194.163.149.48:3002/admin/menu/get-menu?pageNo=1&size=10&categoryId=${id}`)
-    // console.log('Id while calling api', id)
+  const fetchMenuByCategoryId = async (id, page) => {
+    console.log('calling for page', page)
+    const response = await fetch(`http://194.163.149.48:3002/admin/menu/get-menu?pageNo=${page}&size=10&categoryId=${id}`)
     if (!response.ok) {
       throw new Error('Data coud not be fetched!')
     } else {
@@ -57,9 +58,10 @@ const Menu = (props) => {
     }
   }
 
-  useEffect(() => {
-    // console.group('UseEffect Calling')
-    fetchData()
+  // const fetchMenuByPagging()
+
+  const fetchMenuItem = () => {
+    fetchData(menuItemPage)
       .then((res) => {
         setData(res.data)
         setLoading(false)
@@ -68,59 +70,52 @@ const Menu = (props) => {
         console.log(e.message)
         setLoading(true)
       })
-    
+  }
+
+  const fetchCategoryItem = () => {
     fetchCategory()
       .then((res) => {
         setCategory(res.data); // Update the state with the fetched data
         setCategoryLoading(false); // Set loading to false
+        // if(category.length != categoryPages.length){
+        //   setCategoryPages(Array(category.length).fill(1));
+        // }
+        // console.log(categoryPages)
       })
       .catch((error) => {
         console.error('There was a problem with the fetch operation:', error);
         setCategoryLoading(true); // Set loading to false in case of an error
       });
-
-      const storedArray = localStorage.getItem('localArray');
-      if (storedArray) {
-        setItemCount(JSON.parse(storedArray));
-      } 
-
-      if (data.length && !itemInstruction.length) {
-        setItemInstruction(Array(data.length).fill(''));
-      }
-
-  }, [])
-
-  
-
-  if (data.length && !itemCount.length) {
-    setItemCount(Array(data.length).fill(0));
   }
 
-  // const incrementAtIndex = (index) => {
-  //   const updatedArray = [...itemCount];
-  //   updatedArray[index] += 1;
-  //   setItemCount(updatedArray);
-  //   localStorage.setItem('localArray', JSON.stringify(updatedArray));
-  // }
+  useEffect(() => {
 
-  // Function to decrement the value at a specific index
-  // const decrementAtIndex = (index) => {
-  //   const updatedArray = [...itemCount];
-  //   updatedArray[index] -= 1;
-  //   setItemCount(updatedArray);
-  //   localStorage.setItem('localArray', JSON.stringify(updatedArray));
-  // };
+    fetchMenuItem()
+    fetchCategoryItem()
+
+    if (menuItems.length && !itemInstruction.length) {
+      setItemInstruction(Array(menuItems.length).fill(''));
+    }
+    // if (category.length && !categoryPages.length) {
+    //   setCategoryPages(Array(category.length).fill(1));
+    // }
+
+    const localStoredItems = localStorage.getItem('localItems');
+    if(localStoredItems) {
+      setOrderItems(JSON.parse(localStoredItems))
+    }
+  }, [])
 
   const clearItems = () => {
-    const updatedArray = Array(itemCount.length).fill(0);
-    setItemCount(updatedArray);
-    localStorage.setItem('localArray', JSON.stringify(updatedArray));
+    const updatedArray = [];
+    setOrderItems(updatedArray);
+    localStorage.setItem('localItems', JSON.stringify(updatedArray));
   };
 
   // Function to delete the stored array from localStorage
   const cancelOrder = () => {
     clearItems();
-    localStorage.removeItem('localArray');
+    localStorage.removeItem('localItems');
   };
 
   function callAxiosAPI() {
@@ -128,9 +123,6 @@ const Menu = (props) => {
       "assetId": `${assetId}`,
       "menu": orderItems
     });
-
-    // console.log(orderItems)
-
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
@@ -140,8 +132,6 @@ const Menu = (props) => {
       },
       data: dataApi
     };
-
-    // console.log(dataApi)
 
     axios.request(config)
       .then((response) => {
@@ -157,72 +147,59 @@ const Menu = (props) => {
         });
       });
   }
-
-  // Place Order
-  const placeOrder = () => {
-    // pushSelectedItems()
-    callAxiosAPI()
-    clearItems()
-  }
-
-  const viewMore = () => {
-    setMenuApiItems(menuApiItems+10)
-    // console.log(menuApiItems)
-    // const val = menuApiItems + 10;
-    // console.log('viewmoe', menuApiItems)
-    fetchData()
-      .then((res) => {
-        setData(res.data)
-      })
-      .catch((e) => {
-        console.log(e.message)
-        setLoading(true)
-      })
-  }
+  
+  // Load more Items
+  const loadMoreItems = () => {
+    setMenuItemCount(menuItemCount + 10); // Increase the count by 10 to fetch more items
+    fetchMenuItem(); // Fetch the additional items
+  };
 
   // setCategory by id
   function showMenuByCategory(category) {
+    
     if(category==='All') {
       setSelectedCategoryName('Category')
-      // console.log('selected category', category)
-      fetchData()
+      fetchMenuItem()
+    }
+    else{
+      setCategoryItemPage(()=> 1)
+      setSelectedCategoryName(category.name)
+      setSelectedCategoryId(category._id)
+      // console.log('selected category', category._id)
+      fetchMenuByCategoryId(category._id, categoryItemPage)
       .then((res) => {
         setData(res.data)
       })
-      .catch((e) => {
-        console.log(e.message)
-        setLoading(true)
-      })
-    }
-    else{
-      setSelectedCategoryName(category.name)
-      // console.log('selected category', category._id)
-      fetchMenuByCategoryId(category._id)
-      .then((res) => {
-          setData(res.data)
-        })
-        .catch((error) => {
+      .catch((error) => {
           console.error('There was a problem with the fetch operation:', error);
           setCategoryLoading(true); // Set loading to false in case of an error
         });
     }
-    setItemInstruction(Array(data.length).fill(''));
+    setItemInstruction(Array(menuItems.length).fill(''));
   }
-
+  
   // keep input
   const handleItemInstruction = (itemId, index, newValue) => {
     const updatedValues = [...itemInstruction];
     updatedValues[index] = newValue;
     setItemInstruction(updatedValues);
     addInstruction(itemId, index)
-  };
+    localStorage.setItem('localItems', JSON.stringify(orderItems));
 
+    // const newupdatedValues = [...itemInstruction];
+    // updatedValues[index] = newValue;
+    // setItemInstruction(updatedValues);
+
+    // itemInstruction[index] = getInstruction(itemId);
+    // setItemInstruction(updatedValues);
+  };
+  
   // Order Section
-  // create array of objects
   // 1. Add items
   function addItem(item, index) {
     orderItems.push({menuId: `${item._id}`, quantity: parseInt(`${'1'}`), description: itemInstruction[index]})
     setOrderItems([...orderItems])
+    localStorage.setItem('localItems', JSON.stringify(orderItems));
   }
   
   // 2. Remove Item
@@ -237,6 +214,7 @@ const Menu = (props) => {
       setOrderItems(updated);
       // console.log('order item', orderItems)
     }
+    localStorage.setItem('localItems', JSON.stringify(orderItems));
   }
 
   // 3. increase Item
@@ -248,6 +226,7 @@ const Menu = (props) => {
       }
     }
     setOrderItems([...orderItems])
+    localStorage.setItem('localItems', JSON.stringify(orderItems));
   }
 
   // 4. reduce Item
@@ -263,6 +242,7 @@ const Menu = (props) => {
       }
     }
     setOrderItems([...orderItems])
+    localStorage.setItem('localItems', JSON.stringify(orderItems));
   }
 
   // 5. Find Item
@@ -284,6 +264,15 @@ const Menu = (props) => {
       }
     }
   }
+  // 6. PG Expenses
+  function getInstruction(itemId)  {
+    for (const item of orderItems) {
+      if (item.menuId === itemId) {
+        // If the object's id matches the target id, update the specified property
+        return item.instruction // Update the 'name' property
+      }
+    }
+  }
 
   // 7. Add Instruction
   function addInstruction(itemId, index) {
@@ -295,7 +284,44 @@ const Menu = (props) => {
     }
   }
 
-  console.log('Order Items ', orderItems)
+  // Place Order
+  const placeOrder = () => {
+    callAxiosAPI()
+    clearItems()
+  }
+
+  // Paggination
+  const loadNextMenuPage = () => {
+    const newPage = menuItemPage+1;
+    setMenuItemPage(menuItemPage+1)
+    fetchData(newPage)
+      .then((res) => {
+        if(res.data.length>0) {
+          setData(menuItems.concat(res.data))
+        }
+        setLoading(false)
+      })
+      .catch((e) => {
+        console.log(e.message)
+        setLoading(true)
+      })
+  }
+  const loadNextCategoryPage = () => {
+    const newPage = categoryItemPage+1
+    setCategoryItemPage(categoryItemPage+1)
+    fetchMenuByCategoryId(selectedCategoryId, newPage)
+      .then((res) => {
+        if(res.data.length>0) {
+          setData(menuItems.concat(res.data))
+        }
+        setCategoryLoading(false)
+      })
+      .catch((error) => {
+          console.error('There was a problem with the fetch operation:', error);
+          setCategoryLoading(true); // Set loading to false in case of an error
+      });
+  }
+  
   return (
     <>
       <Container className='menuContainer text-light bg_Dark p-0 d-xs-flex' fluid>
@@ -323,7 +349,7 @@ const Menu = (props) => {
                   <>
                     {category.map((category, index)=>(
                       <>
-                        <Dropdown.Item onClick={()=> showMenuByCategory(category)}>{category.name}</Dropdown.Item>
+                        <Dropdown.Item  onClick={()=> showMenuByCategory(category)}>{category.name}</Dropdown.Item>
                       </>
                     ))}
                   </>
@@ -351,7 +377,7 @@ const Menu = (props) => {
             :
             <>
               <Row className='cardContainer p-0 m-0 mt-3 px-2'>
-                {data.map((data, index) =>(
+                {menuItems.map((menuItems, index) =>(
                   <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
                     <Row className='cardDetailContainer h-100 rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
                       <Col className='m-0 p-0 d-flex justify-content-center align-items-center' xs={3} sm={12}>
@@ -360,34 +386,35 @@ const Menu = (props) => {
                         </div>
                       </Col>
                       <Col className='itemDetailContainer' xs={6} sm={12}>
-                        <h5 className='p-0 m-0'>{(`${data.name}`).toLowerCase()}</h5>
-                        <p className='p-0 m-0'>€{(`${data.price}`).toLowerCase()}</p>
-                        <p className='p-0 m-0 colorLightGray'>{(`${data.description}`).toLowerCase()}</p>
+                        <h5 className='p-0 m-0'>{(`${menuItems.name}`).toLowerCase()}</h5>
+                        <p className='p-0 m-0'>€{(`${menuItems.price}`).toLowerCase()}</p>
+                        <p className='p-0 m-0 colorLightGray'>{(`${menuItems.description}`).toLowerCase()}</p>
                         <input
                           type="text"
+                          // value={findItem(data._id) ? `${getInstruction(data._id)}` : `${itemInstruction[index]}`}
                           value={itemInstruction[index]}
-                          onChange={(e) => handleItemInstruction(data._id, index, e.target.value)}
+                          onChange={(e) => handleItemInstruction(menuItems._id, index, e.target.value)}
                           placeholder="Add Instruction"
                         />
                       </Col>
                       <Col className='py-3' xs={3} sm={12}>
                         {
                           (
-                            (findItem(data._id) && getQuantity(data._id)>0)
+                            (findItem(menuItems._id) && getQuantity(menuItems._id)>0)
                             ?
                             <div className='countItemBtn d-flex justify-content-evenly'>
-                              <div className='minusBtn' onClick={() => reduceItem(data._id)} >
+                              <div className='minusBtn' onClick={() => reduceItem(menuItems._id)} >
                                 -
                               </div>
                               <div>
-                              {getQuantity(data._id)}
+                              {getQuantity(menuItems._id)}
                               </div>
-                              <div onClick={() => increaseItem(data._id)}>
+                              <div onClick={() => increaseItem(menuItems._id)}>
                                 +
                               </div>
                             </div>
                             :
-                            <div className='bg_Success countItemBtn text-light text-center' onClick={() => addItem(data, index)}>
+                            <div className='bg_Success countItemBtn text-light text-center' onClick={() => addItem(menuItems, index)}>
                                 +
                             </div>
                           )
@@ -398,7 +425,11 @@ const Menu = (props) => {
                 ))}
               </Row>
               <div className='d-flex justify-content-center text-center'>
-                <p onClick={()=>viewMore()}>view more</p>
+                {(selectedCategoryName === 'Category') ?
+                  <Button onClick={()=>loadNextMenuPage()}>View More Menu</Button>
+                  :
+                  <Button onClick={()=>loadNextCategoryPage()}>View More Category</Button>
+                }
               </div>
               <div className='d-flex justify-content-center py-5' varient="bottom">
                 <Link to="/"> <button onClick={() => cancelOrder()} className='bg-danger border-danger countItemBtn text-light text-center'>Cancel Order</button> </Link>

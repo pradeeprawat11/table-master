@@ -40,9 +40,11 @@ body {
 }
 
 input {
-    background-color: rgba(0, 0, 0, 0.279);
+    padding-left: 10px;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.781);
     border: none;
-    color: white;
+    color: rgb(194, 194, 194);
     width: 100%;
 }
 input:focus {
