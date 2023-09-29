@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const Menu = (props) => {
 
   const [loading, setLoading] = useState(true)
-  const [menuItems, setData] = useState([])
+  const [menuItems, setMenuItems] = useState([])
   const [category, setCategory] = useState([]);
   const [categoryPages, setCategoryPages] = useState([])
   const [categoryLoading, setCategoryLoading] = useState(true)
@@ -63,7 +63,7 @@ const Menu = (props) => {
   const fetchMenuItem = () => {
     fetchData(menuItemPage)
       .then((res) => {
-        setData(res.data)
+        setMenuItems(res.data)
         setLoading(false)
       })
       .catch((e) => {
@@ -168,7 +168,7 @@ const Menu = (props) => {
       // console.log('selected category', category._id)
       fetchMenuByCategoryId(category._id, categoryItemPage)
       .then((res) => {
-        setData(res.data)
+        setMenuItems(res.data)
       })
       .catch((error) => {
           console.error('There was a problem with the fetch operation:', error);
@@ -180,18 +180,18 @@ const Menu = (props) => {
   
   // keep input
   const handleItemInstruction = (itemId, index, newValue) => {
-    const updatedValues = [...itemInstruction];
-    updatedValues[index] = newValue;
-    setItemInstruction(updatedValues);
-    addInstruction(itemId, index)
+    const newupdatedValues = [...orderItems]
+    for (const item of newupdatedValues) {
+      if (item.menuId === itemId) {
+        // If the object's id matches the target id, update the specified property
+        item.description = newValue; // Update the 'name' property
+      }
+    }
+    itemInstruction[index] = newValue
+
+    setOrderItems(newupdatedValues)
     localStorage.setItem('localItems', JSON.stringify(orderItems));
-
-    // const newupdatedValues = [...itemInstruction];
-    // updatedValues[index] = newValue;
-    // setItemInstruction(updatedValues);
-
-    // itemInstruction[index] = getInstruction(itemId);
-    // setItemInstruction(updatedValues);
+    console.log(itemInstruction[index])
   };
   
   // Order Section
@@ -265,24 +265,24 @@ const Menu = (props) => {
     }
   }
   // 6. PG Expenses
-  function getInstruction(itemId)  {
+  function getInstruction(itemId) {
     for (const item of orderItems) {
       if (item.menuId === itemId) {
         // If the object's id matches the target id, update the specified property
-        return item.instruction // Update the 'name' property
+        return item.description
       }
     }
   }
 
   // 7. Add Instruction
-  function addInstruction(itemId, index) {
-    for (const item of orderItems) {
-      if (item.menuId === itemId) {
-        // If the object's id matches the target id, update the specified property
-        item.description = itemInstruction[index]; // Update the 'name' property
-      }
-    }
-  }
+  // function addInstruction(itemId, index) {
+  //   for (const item of orderItems) {
+  //     if (item.menuId === itemId) {
+  //       // If the object's id matches the target id, update the specified property
+  //       item.description = itemInstruction[index]; // Update the 'name' property
+  //     }
+  //   }
+  // }
 
   // Place Order
   const placeOrder = () => {
@@ -297,7 +297,7 @@ const Menu = (props) => {
     fetchData(newPage)
       .then((res) => {
         if(res.data.length>0) {
-          setData(menuItems.concat(res.data))
+          setMenuItems(menuItems.concat(res.data))
         }
         setLoading(false)
       })
@@ -312,7 +312,7 @@ const Menu = (props) => {
     fetchMenuByCategoryId(selectedCategoryId, newPage)
       .then((res) => {
         if(res.data.length>0) {
-          setData(menuItems.concat(res.data))
+          setMenuItems(menuItems.concat(res.data))
         }
         setCategoryLoading(false)
       })
@@ -321,7 +321,7 @@ const Menu = (props) => {
           setCategoryLoading(true); // Set loading to false in case of an error
       });
   }
-  
+
   return (
     <>
       <Container className='menuContainer text-light bg_Dark p-0 d-xs-flex' fluid>
@@ -392,7 +392,7 @@ const Menu = (props) => {
                         <input
                           type="text"
                           // value={findItem(data._id) ? `${getInstruction(data._id)}` : `${itemInstruction[index]}`}
-                          value={itemInstruction[index]}
+                          value={getInstruction(menuItems._id)}
                           onChange={(e) => handleItemInstruction(menuItems._id, index, e.target.value)}
                           placeholder="Add Instruction"
                         />
