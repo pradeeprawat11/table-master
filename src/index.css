@@ -32,6 +32,10 @@ code {
   background-color: #28272f;;
 }
 
+.borderSuccess {
+  border-color: #00c61b;
+}
+
 .primaryButton {
   /* bg_Success w-100 border-0 text-light p-2 px-5 */
   background-color: #00c61b;

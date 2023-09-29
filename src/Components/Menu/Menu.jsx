@@ -14,13 +14,13 @@ const Menu = (props) => {
   const [loading, setLoading] = useState(true)
   const [menuItems, setMenuItems] = useState([])
   const [category, setCategory] = useState([]);
-  const [categoryPages, setCategoryPages] = useState([])
+  // const [categoryPages, setCategoryPages] = useState([])
   const [categoryLoading, setCategoryLoading] = useState(true)
   const [selectedCategoryName, setSelectedCategoryName] = useState('Category')
   const [selectedCategoryId, setSelectedCategoryId] = useState();
   const [orderItems, setOrderItems] = useState([])
   const [itemInstruction, setItemInstruction] = useState([])
-  const [menuItemCount, setMenuItemCount] = useState(1)
+  // const [menuItemCount, setMenuItemCount] = useState(1)
   const [menuItemPage, setMenuItemPage] = useState(1)
   const [categoryItemPage, setCategoryItemPage] = useState(1)
 
@@ -308,22 +308,26 @@ const Menu = (props) => {
   return (
     <>
       <Container className='menuContainer text-light bg_Dark p-0 d-xs-flex' fluid>
-        <div className='d-flex text-light align-items-center py-2'>
-          <Link to="/" className='text-light'>
-            <div className='menuLogo d-flex align-items-center mx-3 p-2'>
-              <LiaLessThanSolid size={20} />
+        <div className='d-flex justify-content-between align-items-center'>
+          <div className='d-flex text-light align-items-center py-2'>
+            <Link to="/" className='text-light'>
+              <div className='menuLogo d-flex align-items-center mx-3 p-2'>
+                <LiaLessThanSolid size={20} />
+              </div>
+            </Link>
+            <div>
+              <h4 className='m-0'>Room Eats Menu</h4>
             </div>
-          </Link>
-          <div>
-            <h4 className='m-0'>Room Eats Menu</h4>
           </div>
-          <div>
-            <Dropdown className='bg-none'>
-              <Dropdown.Toggle variant='success' className="categoryDropdown dropdown-basic bg-none border-success p-1 mx-2">
+        {/* </div>
+        <div> */}
+        <div>
+            <Dropdown className='bg-none borderSuccess'>
+              <Dropdown.Toggle variant='success' className="categoryDropdown bold-text dropdown-basic bg-none border-success px-2 mx-2">
                 {selectedCategoryName}
               </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={()=> showMenuByCategory('All')}>All</Dropdown.Item>
+              <Dropdown.Menu className='p-2'>
+                <Dropdown.Item className='' onClick={()=> showMenuByCategory('All')}>All</Dropdown.Item>
                 {
                   categoryLoading 
                   ?
@@ -338,9 +342,10 @@ const Menu = (props) => {
                   </>
                 }
               </Dropdown.Menu>
-          </Dropdown>
+            </Dropdown>
           </div>
         </div>
+        
         <ToastContainer
           position='top-right'
           autoClose={5000}
