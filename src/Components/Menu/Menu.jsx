@@ -95,10 +95,7 @@ const Menu = (props) => {
     if (menuItems.length && !itemInstruction.length) {
       setItemInstruction(Array(menuItems.length).fill(''));
     }
-    // if (category.length && !categoryPages.length) {
-    //   setCategoryPages(Array(category.length).fill(1));
-    // }
-
+   
     const localStoredItems = localStorage.getItem('localItems');
     if(localStoredItems) {
       setOrderItems(JSON.parse(localStoredItems))
@@ -291,7 +288,7 @@ const Menu = (props) => {
   const loadNextCategoryPage = () => {
     const newPage = categoryItemPage+1
     setCategoryItemPage(newPage)
-    console.log('new page', newPage)
+    // console.log('new page', newPage)
     fetchMenuByCategoryId(selectedCategoryId, newPage)
       .then((res) => {
         if(res.data.length>0) {
@@ -336,7 +333,7 @@ const Menu = (props) => {
                   <>
                     {category.map((category, index)=>(
                       <>
-                        <Dropdown.Item  onClick={()=> showMenuByCategory(category)}>{category.name}</Dropdown.Item>
+                        <Dropdown.Item key={index} onClick={()=> showMenuByCategory(category)}>{category.name}</Dropdown.Item>
                       </>
                     ))}
                   </>
