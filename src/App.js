@@ -4,6 +4,7 @@ import Home from "./Components/Home/Home";
 import Menu from "./Components/Menu/Menu";
 import Payment from './Components/Payment/Payment';
 import OrderPlaced from './Components/OrderPlaced/OrderPlaced';
+import ViewItems from './Components/ViewItems/ViewItems';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='menu' element={<Menu />} />
+          <Route path='viewItems' element={<ViewItems />} />
           <Route path='payment' element={<Payment />} />
           <Route path='orderPlaced' element={<OrderPlaced />} />
           <Route path='*' element={<Home />} />

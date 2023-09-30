@@ -8,30 +8,30 @@ import { LiaLessThanSolid } from 'react-icons/lia'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ViewItems from '../ViewItems/ViewItems';
 
-const Menu = (props) => {
+const Menu = () => {
 
   const [loading, setLoading] = useState(true)
   const [menuItems, setMenuItems] = useState([])
   const [category, setCategory] = useState([]);
-  // const [categoryPages, setCategoryPages] = useState([])
   const [categoryLoading, setCategoryLoading] = useState(true)
   const [selectedCategoryName, setSelectedCategoryName] = useState('Category')
   const [selectedCategoryId, setSelectedCategoryId] = useState();
   const [orderItems, setOrderItems] = useState([])
   const [itemInstruction, setItemInstruction] = useState([])
-  // const [menuItemCount, setMenuItemCount] = useState(1)
   const [menuItemPage, setMenuItemPage] = useState(1)
   const [categoryItemPage, setCategoryItemPage] = useState(1)
+  const [isViewItems, setIsViewItems] = useState(false)
+  const [allOrderItems, setAllOrderItems] = useState([])
+  const [totalAmount, setTotalAmount] = useState(0)
 
   const navigate = useNavigate();
   const queryParameters = new URLSearchParams(window.location.search)
   const assetId = queryParameters.get("assetId")
 
   const fetchData = async (page) => {
-    // console.log('fetch data calling')
     const response = await fetch(`http://194.163.149.48:3002/admin/menu/get-menu?pageNo=${page}&size=10`)
-    // console.log(menuApiItems)
     if (!response.ok) {
       throw new Error('Data coud not be fetched!')
     } else {
@@ -48,7 +48,6 @@ const Menu = (props) => {
   }
 
   const fetchCategory = async () => {
-    // console.log('fetchCategory calling')
     const response = await fetch('http://194.163.149.48:3002/admin/item-category')
     if (!response.ok) {
       throw new Error('Data coud not be fetched!')
@@ -56,8 +55,6 @@ const Menu = (props) => {
       return response.json()
     }
   }
-
-  // const fetchMenuByPagging()
 
   const fetchMenuItem = () => {
     fetchData(menuItemPage)
@@ -76,10 +73,6 @@ const Menu = (props) => {
       .then((res) => {
         setCategory(res.data); // Update the state with the fetched data
         setCategoryLoading(false); // Set loading to false
-        // if(category.length != categoryPages.length){
-        //   setCategoryPages(Array(category.length).fill(1));
-        // }
-        // console.log(categoryPages)
       })
       .catch((error) => {
         console.error('There was a problem with the fetch operation:', error);
@@ -88,30 +81,36 @@ const Menu = (props) => {
   }
 
   useEffect(() => {
-
     fetchMenuItem()
     fetchCategoryItem()
-
     if (menuItems.length && !itemInstruction.length) {
       setItemInstruction(Array(menuItems.length).fill(''));
     }
-   
+    // Fetch 
     const localStoredItems = localStorage.getItem('localItems');
     if(localStoredItems) {
       setOrderItems(JSON.parse(localStoredItems))
+    }
+    // Fetch All Order Items From Local Storage
+    const fetchLocalAllOrderItems = localStorage.getItem('localAllOrderItems');
+    if(fetchLocalAllOrderItems) {
+      setAllOrderItems(JSON.parse(fetchLocalAllOrderItems))
     }
   }, [])
 
   const clearItems = () => {
     const updatedArray = [];
-    setOrderItems(updatedArray);
+    setOrderItems([...updatedArray]);
+    setAllOrderItems([...updatedArray]);
     localStorage.setItem('localItems', JSON.stringify(updatedArray));
+    localStorage.setItem('localAllOrderItems', JSON.stringify(updatedArray));
   };
 
   // Function to delete the stored array from localStorage
   const cancelOrder = () => {
     clearItems();
     localStorage.removeItem('localItems');
+    localStorage.removeItem('localAllOrderItems');
   };
 
   function callAxiosAPI() {
@@ -152,7 +151,6 @@ const Menu = (props) => {
       fetchMenuItem()
     }
     else{
-      
       setSelectedCategoryName(category.name)
       setSelectedCategoryId(category._id)
       // console.log('selected category', category._id)
@@ -178,7 +176,6 @@ const Menu = (props) => {
       }
     }
     itemInstruction[index] = newValue
-
     setOrderItems(newupdatedValues)
     localStorage.setItem('localItems', JSON.stringify(orderItems));
   };
@@ -186,6 +183,8 @@ const Menu = (props) => {
   // Order Section
   // 1. Add items
   function addItem(item, index) {
+    addInAllOrderItems(item)
+    calculateTotalAmount()
     orderItems.push({menuId: `${item._id}`, quantity: parseInt(`${'1'}`), description: itemInstruction[index]})
     setOrderItems([...orderItems])
     localStorage.setItem('localItems', JSON.stringify(orderItems));
@@ -193,9 +192,9 @@ const Menu = (props) => {
   
   // 2. Remove Item
   function removeItem(itemId) {
+    calculateTotalAmount()
     // Find the index of the item to remove
     const indexToRemove = orderItems.findIndex(item => item.menuId === itemId);
-    // console.log('remove index', indexToRemove)
     // Check if the item exists in the array
     if (indexToRemove !== -1) {
       // Use splice to remove the item from the copied array
@@ -224,7 +223,7 @@ const Menu = (props) => {
       if (item.menuId === itemId) {
         // If the object's id matches the target id, update the specified property
         item.quantity = item.quantity-1; // Update the 'name' property
-        console.log('item quantity', item.quantity)
+        // console.log('item quantity', item.quantity)
         if(item.quantity===0) {
           removeItem(itemId)
         }
@@ -263,18 +262,13 @@ const Menu = (props) => {
     }
   }
 
-  // Place Order
-  const placeOrder = () => {
-    callAxiosAPI()
-    clearItems()
-  }
-
+  
   // Paggination
   const loadNextMenuPage = () => {
     const newPage = menuItemPage+1;
     setMenuItemPage(newPage)
     fetchData(newPage)
-      .then((res) => {
+    .then((res) => {
         if(res.data.length>0) {
           setMenuItems(menuItems.concat(res.data))
         }
@@ -297,14 +291,69 @@ const Menu = (props) => {
         setCategoryLoading(false)
       })
       .catch((error) => {
-          console.error('There was a problem with the fetch operation:', error);
+        console.error('There was a problem with the fetch operation:', error);
           setCategoryLoading(true); // Set loading to false in case of an error
-      });
+        });
+      }
+      
+      // toggle view added items
+      function hideViewItems() {
+        setIsViewItems(false);
+      }
+      
+      // find item in all order items
+    function findInAllOrderItems(itemId) {
+    for (const item of allOrderItems) {
+      if (item._id === itemId) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  return (
+  // store all added items 
+  function addInAllOrderItems(item) {
+    if(!findInAllOrderItems(item._id)){
+      allOrderItems.push({_id: item._id, name: item.name, price: item.price, describe: item.description})
+      // setOrderItems([...allOrderItems])
+      localStorage.setItem('localAllOrderItems', JSON.stringify(allOrderItems));
+    }
+  }
+  
+  // total amount
+  function calculateTotalAmount() {
+    let total = 0;
+    allOrderItems.map((data, i)=> {
+      if(findItem(data._id)) {
+        total = total + data.price
+        } 
+      })
+      setTotalAmount(total)
+    }
+
+    // Store All Order Item Array in Local Storage
+    const localAllOrderItems = localStorage.getItem('localAllOrderItems');
+    if(localAllOrderItems) {
+
+    }
+
+    // Place order
+    function placeOrder() {
+      calculateTotalAmount()
+      setIsViewItems(true)
+    }
+    
+    // Confirm Order
+    const confirmOrder = () => {
+      callAxiosAPI()
+      clearItems()
+    }
+
+    return (
     <>
+    {!isViewItems ?
       <Container className='menuContainer text-light bg_Dark p-0 d-xs-flex' fluid>
+        
         <div className='d-flex justify-content-between align-items-center'>
           <div className='d-flex text-light align-items-center py-2'>
             <Link to="/" className='text-light'>
@@ -316,8 +365,6 @@ const Menu = (props) => {
               <h4 className='m-0'>Room Eats Menu</h4>
             </div>
           </div>
-        {/* </div>
-        <div> */}
         <div>
             <Dropdown className='bg-none borderSuccess'>
               <Dropdown.Toggle variant='success' className="categoryDropdown bold-text dropdown-basic bg-none border-success px-2 mx-2">
@@ -422,11 +469,32 @@ const Menu = (props) => {
               <div className='d-flex justify-content-center py-5' varient="bottom">
                 <Link to="/"> <button onClick={() => cancelOrder()} className='bg-danger border-danger countItemBtn text-light text-center'>Cancel Order</button> </Link>
                 <button onClick={() => clearItems()} className='bg-primary countItemBtn text-light border-primary text-center mx-3'>Clear Items</button>
-                <Link > <button onClick={placeOrder} className='bg_Success countItemBtn text-light text-center'> Place Order</button> </Link>
+                {/* <Link > <button onClick={confirmOrder} className='bg_Success countItemBtn text-light text-center'> Place Order</button> </Link> */}
+                <Link > <button onClick={()=>placeOrder()}  className='bg_Success countItemBtn text-light text-center'> Place Order </button> </Link>
               </div>
             </>
         }
       </Container >
+      :
+      <ViewItems className='d-md-none d-none' 
+        menuItems={menuItems} 
+        orderItems={orderItems}
+        getInstruction={getInstruction}
+        handleItemInstruction={handleItemInstruction}
+        findItem={findItem}
+        getQuantity={getQuantity}
+        reduceItem={reduceItem}
+        increaseItem={increaseItem}
+        confirmOrder={confirmOrder}
+        cancelOrder={cancelOrder}
+        clearItems={clearItems}
+        itemInstruction={itemInstruction}
+        addItem={addItem}
+        hideViewItems={hideViewItems}
+        allOrderItems={allOrderItems}
+        totalAmount={totalAmount}
+      />
+    }
     </>
   )
 }
