@@ -36,6 +36,16 @@ code {
   border-color: #00c61b;
 }
 
+.basicButton {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border: none;
+  border-radius: 7px;
+  font-weight: 500;
+  /* outline: none; */
+}
+
 .primaryButton {
   /* bg_Success w-100 border-0 text-light p-2 px-5 */
   background-color: #00c61b;
@@ -57,4 +67,16 @@ code {
   max-width: 20rem;
   left: auto;
   right: inherit;
+}
+
+.fixedNavbar {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  box-shadow: 0px -10px 15px 10px black;
+  background-color: #16151b;
+}
+
+.no-underline {
+  text-decoration: none;
 }

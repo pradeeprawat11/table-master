@@ -2,15 +2,18 @@ import {React} from 'react'
 import { Container, Row, Col, Image } from 'react-bootstrap'
 import { LiaLessThanSolid } from 'react-icons/lia'
 import { Link } from 'react-router-dom'
+import {MdCancel} from 'react-icons/md'
+import {AiOutlineAppstoreAdd} from 'react-icons/ai'
+import {GiConfirmed} from 'react-icons/gi'
 import { ToastContainer } from 'react-toastify';
 
 const ViewItems = (props) => {
-    const {getInstruction, handleItemInstruction, findItem, getQuantity, reduceItem, increaseItem, confirmOrder, cancelOrder, addItem, hideViewItems, allOrderItems, totalAmount} = props;
-
+  const {getInstruction, handleItemInstruction, findItem, getQuantity, reduceItem, increaseItem, confirmOrder, cancelOrder, addItem, hideViewItems, allOrderItems, totalAmount} = props;
+  
   return (
     <>
         <Container className='menuContainer text-light bg_Dark p-0 d-xs-flex' fluid>
-          <div className='d-flex text-light align-items-center py-2'>
+          <div className='fixedNavbar d-flex text-light align-items-center py-2'>
             <Link onClick={()=> hideViewItems()} className='text-light'>
               <div className='menuLogo d-flex align-items-center mx-3 p-2'>
                 <LiaLessThanSolid size={20} />
@@ -32,7 +35,7 @@ const ViewItems = (props) => {
           pauseOnHover
           theme='light'
         />
-              <Row className='cardContainer p-0 m-0 mt-3 px-2'>
+              <Row className='cardContainer p-0 m-0 mt-5 py-4 mt-3 px-2'>
                 {allOrderItems.map((data, index) =>(
                   findItem(data._id) && 
                   <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
@@ -80,10 +83,15 @@ const ViewItems = (props) => {
                   </Col>
                 ))}
               </Row>
-              <div className='d-flex justify-content-center py-5' varient="bottom">
-                <Link to="/"> <button onClick={() => cancelOrder()} className='bg-danger border-danger countItemBtn text-light text-center'>Cancel Order</button> </Link>
-                <button onClick={() => hideViewItems()} className='bg-primary countItemBtn text-light border-primary text-center mx-3'>Add More Items</button>
-                <Link to="/orderPlaced" > <button onClick={confirmOrder} className='bg_Success countItemBtn text-light text-center'> Confirm Order {totalAmount} </button> </Link>
+
+              {totalAmount===0 &&
+                <h6 className='text-center'>Please Select Items To Confirm Order</h6>
+              }
+              
+              <div className='d-flex justify-content-center my-5' varient="bottom">
+                {totalAmount>0 &&  <Link className='no-underline' onClick={()=>hideViewItems()}> <button onClick={() => cancelOrder()} className='basicButton bg-danger border-danger countItemBtn text-light text-center'><MdCancel className='mx-1' />Cancel Order</button> </Link>}
+                <button onClick={() => hideViewItems()} className='basicButton bg-primary countItemBtn text-light border-primary text-center mx-3'> <AiOutlineAppstoreAdd className='mx-1' /> Add More Items</button>
+                {totalAmount>0 && <Link className='no-underline' to="/orderPlaced" > <button onClick={confirmOrder} className='basicButton bg_Success countItemBtn text-light text-center'>  <GiConfirmed className='mx-1' />Confirm Order {`€ (${totalAmount})`}</button> </Link>}
               </div>
       </Container >
     </>

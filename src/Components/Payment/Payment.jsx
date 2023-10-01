@@ -1,4 +1,4 @@
-import {React, useState} from 'react'
+import {React} from 'react'
 import '../../index.css'
 import './Payment.css'
 import { Container, Row, Form, Image } from 'react-bootstrap'
@@ -10,12 +10,12 @@ import {BsFillPlusSquareFill} from 'react-icons/bs'
 
 const Payment = () => {
 
-  const[selectedPayment, setSelectedPayment] = useState(null);
+  // const[selectedPayment, setSelectedPayment] = useState(null);
   
   return (
     <>
       <Container className='paymentContainer bg_Dark p-0 m-0 h-100' fluid>
-        <div className='d-flex text-light align-items-center py-2'>
+        <div className='fixedNavbar d-flex text-light align-items-center py-2'>
           <Link to="/menu" className='text-light'>
             <div className='menuLogo d-flex align-items-center mx-3 p-2'>
               <LiaLessThanSolid size={20} />
@@ -25,7 +25,7 @@ const Payment = () => {
             <h4 className='m-0'>Digital Menu</h4>
           </div>
         </div>
-        <Row className='text-light d-flex justify-content-center align-items-center p-3 m-0'>
+        <Row className='text-light d-flex justify-content-center align-items-center p-3 m-0 mt-5 py-4'>
           <Form className='paymentMethods w-100 p-0'>
             {cardPayment.map((cardPayment, index) => (
                 <div key={index} className='paymentOption bg_LightDark  d-flex justify-content-between p-2 my-2'>
@@ -41,7 +41,7 @@ const Payment = () => {
                     <Form.Check
                     name="group1"
                     type='radio'
-                    onChange={() => setSelectedPayment(`${cardPayment.number}`)}
+                    // onChange={() => setSelectedPayment(`${cardPayment.number}`)}
                     />
                   </div>
                 </div>
@@ -66,7 +66,7 @@ const Payment = () => {
                     <Form.Check
                     name="group1"
                     type='radio'
-                    onChange={() => setSelectedPayment(`${onlinePayment.name}`)}
+                    // onChange={() => setSelectedPayment(`${onlinePayment.name}`)}
                     />
                   </div>
                 </div>

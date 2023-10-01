@@ -5,6 +5,10 @@ import '../../index.css'
 import { Link } from 'react-router-dom'
 import { Container, Row, Col, Image, Dropdown, Button } from 'react-bootstrap'
 import { LiaLessThanSolid } from 'react-icons/lia'
+import {AiOutlineReload} from 'react-icons/ai'
+import {BiSolidCategoryAlt} from 'react-icons/bi'
+import {VscClearAll} from 'react-icons/vsc'
+import {GiConfirmed} from 'react-icons/gi'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -145,15 +149,16 @@ const Menu = () => {
   
   // setCategory by id
   function showMenuByCategory(category) {
-    setCategoryItemPage(1)
+    
     if(category==='All') {
+      setCategoryItemPage(1)
       setSelectedCategoryName('Category')
       fetchMenuItem()
     }
     else{
+      setCategoryItemPage(1)
       setSelectedCategoryName(category.name)
       setSelectedCategoryId(category._id)
-      // console.log('selected category', category._id)
       fetchMenuByCategoryId(category._id, categoryItemPage)
       .then((res) => {
         setMenuItems(res.data)
@@ -184,10 +189,10 @@ const Menu = () => {
   // 1. Add items
   function addItem(item, index) {
     addInAllOrderItems(item)
-    calculateTotalAmount()
     orderItems.push({menuId: `${item._id}`, quantity: parseInt(`${'1'}`), description: itemInstruction[index]})
     setOrderItems([...orderItems])
     localStorage.setItem('localItems', JSON.stringify(orderItems));
+    calculateTotalAmount()
   }
   
   // 2. Remove Item
@@ -203,6 +208,7 @@ const Menu = () => {
       // console.log('order item', orderItems)
     }
     localStorage.setItem('localItems', JSON.stringify(orderItems));
+    calculateTotalAmount()
   }
 
   // 3. increase Item
@@ -215,6 +221,7 @@ const Menu = () => {
     }
     setOrderItems([...orderItems])
     localStorage.setItem('localItems', JSON.stringify(orderItems));
+    calculateTotalAmount()
   }
 
   // 4. reduce Item
@@ -231,6 +238,7 @@ const Menu = () => {
     }
     setOrderItems([...orderItems])
     localStorage.setItem('localItems', JSON.stringify(orderItems));
+    calculateTotalAmount()
   }
 
   // 5. Find Item
@@ -243,7 +251,7 @@ const Menu = () => {
     return false;
   }
 
-  // 6. Get Index
+  // 6. Get quantity
   function getQuantity(itemId)  {
     for (const item of orderItems) {
       if (item.menuId === itemId) {
@@ -282,7 +290,7 @@ const Menu = () => {
   const loadNextCategoryPage = () => {
     const newPage = categoryItemPage+1
     setCategoryItemPage(newPage)
-    // console.log('new page', newPage)
+    console.log('new page', newPage)
     fetchMenuByCategoryId(selectedCategoryId, newPage)
       .then((res) => {
         if(res.data.length>0) {
@@ -314,18 +322,29 @@ const Menu = () => {
   // store all added items 
   function addInAllOrderItems(item) {
     if(!findInAllOrderItems(item._id)){
-      allOrderItems.push({_id: item._id, name: item.name, price: item.price, describe: item.description})
+      allOrderItems.push({_id: item._id, name: item.name, price: item.price, description: item.description})
       // setOrderItems([...allOrderItems])
       localStorage.setItem('localAllOrderItems', JSON.stringify(allOrderItems));
     }
   }
-  
+
+  // get price
+  function getPrice(itemId) {
+    for (const item of allOrderItems) {
+      if (item._id === itemId) {
+        return item.price
+      }
+    }
+  }
+
   // total amount
   function calculateTotalAmount() {
     let total = 0;
     allOrderItems.map((data, i)=> {
       if(findItem(data._id)) {
-        total = total + data.price
+        const itemPrice = getPrice(data._id)
+        const noOfItems = getQuantity(data._id)
+        total = total + (itemPrice*noOfItems)
         } 
       })
       setTotalAmount(total)
@@ -354,7 +373,7 @@ const Menu = () => {
     {!isViewItems ?
       <Container className='menuContainer text-light bg_Dark p-0 d-xs-flex' fluid>
         
-        <div className='d-flex justify-content-between align-items-center'>
+        <div className='fixedNavbar d-flex justify-content-between align-items-center'>
           <div className='d-flex text-light align-items-center py-2'>
             <Link to="/" className='text-light'>
               <div className='menuLogo d-flex align-items-center mx-3 p-2'>
@@ -365,10 +384,10 @@ const Menu = () => {
               <h4 className='m-0'>Room Eats Menu</h4>
             </div>
           </div>
-        <div>
+          <div>
             <Dropdown className='bg-none borderSuccess'>
-              <Dropdown.Toggle variant='success' className="categoryDropdown bold-text dropdown-basic bg-none border-success px-2 mx-2">
-                {selectedCategoryName}
+              <Dropdown.Toggle variant='success' className="d-flex align-items-center categoryDropdown bold-text dropdown-basic bg-none border-2 border-success px-2 mx-2">
+                <BiSolidCategoryAlt className='mx-1' /> <span className='mx-1'> {selectedCategoryName} </span> 
               </Dropdown.Toggle>
               <Dropdown.Menu className='p-2'>
                 <Dropdown.Item className='' onClick={()=> showMenuByCategory('All')}>All</Dropdown.Item>
@@ -405,10 +424,10 @@ const Menu = () => {
         {
           loading
             ?
-            <h3 className='text-center mt-5'>Loading...</h3>
+            <h3 className='text-center mt-5 py-4 h-100'>Loading...</h3>
             :
             <>
-              <Row className='cardContainer p-0 m-0 mt-3 px-2'>
+              <Row className='cardContainer p-0 m-0 mt-5 py-4 px-2'>
                 {menuItems.map((menuItems, index) =>(
                   <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
                     <Row className='cardDetailContainer h-100 rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
@@ -458,19 +477,24 @@ const Menu = () => {
               </Row>
               <div className='d-flex justify-content-center text-center'>
                 { (menuItems.length>0) ? ((selectedCategoryName === 'Category') ?
-                    <Button onClick={()=>loadNextMenuPage()}>View More</Button>
+                    <Button variant='info' className='py-1 my-3 d-flex align-items-center' onClick={()=>loadNextMenuPage()}> <AiOutlineReload className='mx-1' /> <span className='mx-1'>View More</span> </Button>
                     :
-                    <Button onClick={()=>loadNextCategoryPage()}>View More</Button>
+                    <Button variant='info' className='py-1 my-3 d-flex align-items-center' onClick={()=>loadNextCategoryPage()}><AiOutlineReload className='mx-1' /> <span className='mx-1'>View More</span></Button>
                   )
                   :
                   <h3>No Items</h3>
                 }
               </div>
-              <div className='d-flex justify-content-center py-5' varient="bottom">
-                <Link to="/"> <button onClick={() => cancelOrder()} className='bg-danger border-danger countItemBtn text-light text-center'>Cancel Order</button> </Link>
-                <button onClick={() => clearItems()} className='bg-primary countItemBtn text-light border-primary text-center mx-3'>Clear Items</button>
-                {/* <Link > <button onClick={confirmOrder} className='bg_Success countItemBtn text-light text-center'> Place Order</button> </Link> */}
-                <Link > <button onClick={()=>placeOrder()}  className='bg_Success countItemBtn text-light text-center'> Place Order </button> </Link>
+              <div className='d-flex justify-content-center m-5' varient="bottom">
+                {
+                  orderItems.length ?
+                  <>
+                    <button onClick={() => clearItems()} className='basicButton bg-danger countItemBtn text-light border-danger text-center mx-3'><VscClearAll className='mx-1'/>Clear Items</button>
+                    <button onClick={()=>placeOrder()}  className='basicButton bg_Success countItemBtn text-light text-center '> <GiConfirmed className='mx-1'/>Place Order</button>
+                  </>
+                  :
+                  <h6>Please slelect items to pLace order</h6>
+                }
               </div>
             </>
         }
