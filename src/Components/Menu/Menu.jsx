@@ -6,7 +6,8 @@ import { Link } from 'react-router-dom'
 import { Container, Row, Col, Image, Dropdown, Button } from 'react-bootstrap'
 import { LiaLessThanSolid } from 'react-icons/lia'
 import {AiOutlineReload} from 'react-icons/ai'
-import {BiSolidCategoryAlt} from 'react-icons/bi'
+import {GiShoppingCart} from 'react-icons/gi'
+import {MdRestaurantMenu} from 'react-icons/md'
 import {VscClearAll} from 'react-icons/vsc'
 import {GiConfirmed} from 'react-icons/gi'
 import axios from 'axios'
@@ -290,7 +291,6 @@ const Menu = () => {
   const loadNextCategoryPage = () => {
     const newPage = categoryItemPage+1
     setCategoryItemPage(newPage)
-    console.log('new page', newPage)
     fetchMenuByCategoryId(selectedCategoryId, newPage)
       .then((res) => {
         if(res.data.length>0) {
@@ -384,10 +384,10 @@ const Menu = () => {
               <h4 className='m-0'>Room Eats Menu</h4>
             </div>
           </div>
-          <div>
+          <div className='d-flex align-items-center'>
             <Dropdown className='bg-none borderSuccess'>
               <Dropdown.Toggle variant='success' className="d-flex align-items-center categoryDropdown bold-text dropdown-basic bg-none border-2 border-success px-2 mx-2">
-                <BiSolidCategoryAlt className='mx-1' /> <span className='mx-1'> {selectedCategoryName} </span> 
+                <MdRestaurantMenu className='mx-1' /> <span className='mx-1'> {selectedCategoryName} </span> 
               </Dropdown.Toggle>
               <Dropdown.Menu className='p-2'>
                 <Dropdown.Item className='' onClick={()=> showMenuByCategory('All')}>All</Dropdown.Item>
@@ -406,6 +406,13 @@ const Menu = () => {
                 }
               </Dropdown.Menu>
             </Dropdown>
+            {orderItems.length>0 && 
+            <div className='position-relative c-pointer' onClick={()=>placeOrder()}>
+              <div className='orderItemsCount position-absolute bg-danger'>
+                <p className='m-0 p-1'>{orderItems.length}</p>
+              </div>
+              <GiShoppingCart size={30} className='mx-2' />
+            </div>}
           </div>
         </div>
         

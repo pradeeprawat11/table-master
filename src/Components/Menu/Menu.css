@@ -50,14 +50,27 @@ input {
     font-weight: 500;
     padding-left: 10px;
     border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.781);
+    background-color: rgb(220, 220, 220);
     border: none;
-    color: rgb(194, 194, 194);
+    color: rgb(67, 67, 67);
     width: 100%;
 }
 input:focus {
     border: none;
     outline: none;
+}
+
+.orderItemsCount {
+    border-radius: 100px;
+    bottom: 15px;
+    left: 13px;
+    font-size: xx-small;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
 }
  
 @media (max-width: 576px) {

@@ -80,3 +80,7 @@ code {
 .no-underline {
   text-decoration: none;
 }
+
+.c-pointer {
+  cursor: pointer;
+}
