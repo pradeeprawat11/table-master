@@ -73,7 +73,16 @@ const Menu = () => {
       })
   }
 
-  const fetchCategoryItem = () => {
+  useEffect(() => {
+    fetchData(menuItemPage)
+    .then((res) => {
+      setMenuItems(res.data)
+      setLoading(false)
+    })
+    .catch((e) => {
+      console.log(e.message)
+      setLoading(true)
+    })
     fetchCategory()
       .then((res) => {
         setCategory(res.data); // Update the state with the fetched data
@@ -83,11 +92,7 @@ const Menu = () => {
         console.error('There was a problem with the fetch operation:', error);
         setCategoryLoading(true); // Set loading to false in case of an error
       });
-  }
 
-  useEffect(() => {
-    fetchMenuItem()
-    fetchCategoryItem()
     if (menuItems.length && !itemInstruction.length) {
       setItemInstruction(Array(menuItems.length).fill(''));
     }
@@ -101,7 +106,7 @@ const Menu = () => {
     if(fetchLocalAllOrderItems) {
       setAllOrderItems(JSON.parse(fetchLocalAllOrderItems))
     }
-  }, [])
+  },[])
 
   const clearItems = () => {
     const updatedArray = [];
