@@ -16,8 +16,6 @@ import CategoryMenu from './CategoryMenu/CategoryMenu';
 
 const Menu = () => {
 
-  // const [loading, setLoading] = useState(true)
-  // const [menuItems, setMenuItems] = useState([])
   const [category, setCategory] = useState([]);
   const [categoryLoading, setCategoryLoading] = useState(true)
   const [selectedCategoryName, setSelectedCategoryName] = useState('Category')
@@ -86,7 +84,6 @@ const Menu = () => {
     localStorage.setItem('localAllOrderItems', JSON.stringify(updatedArray));
   };
 
-  // Function to delete the stored array from localStorage
   const cancelOrder = () => {
     clearItems();
     localStorage.removeItem('localItems');
