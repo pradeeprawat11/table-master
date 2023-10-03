@@ -84,3 +84,7 @@ code {
 .c-pointer {
   cursor: pointer;
 }
+
+.h-full {
+  height: 100vh;
+}
