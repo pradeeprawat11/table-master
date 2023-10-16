@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {  Row, Col, Image, Button } from 'react-bootstrap'
+import {  Row, Col, Image, Button, PageItem } from 'react-bootstrap'
 import {AiOutlineReload} from 'react-icons/ai'
 import {VscClearAll} from 'react-icons/vsc'
 import {GiConfirmed} from 'react-icons/gi'
@@ -29,14 +29,61 @@ const MainMenu = (props) => {
       });
   },[menuPage])
 
+  console.log('menu Page', menuPage)
+
   return (
     <>
     {
       !menuLoading ?
       <>
-        <Row className='cardContainer p-0 m-0 mt-5 py-4 px-2 text-light'>
+        <Row className='cardContainer p-2 m-0'>
           {menuData.map((menuData, index) =>(
-            <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
+          <>
+            <div key={index} className='w-100 p-2'>
+              <div className='d-flex align-items-center justify-content-between'>
+                <div className='d-flex itemImgInfo'>
+                  <Image className='menuItemImage' src="https://howtostartanllc.com/images/business-ideas/business-idea-images/fast-food.jpg" />
+                  <div className='justify-content-between px-2'>
+                    <h5 className='m-0 p-0'>{(`${menuData.name}`).toLowerCase()}</h5>
+                    <p className='m-0 p-0'>{(`${menuData.description}`).toLowerCase()}</p>
+                    <input
+                    type="text"
+                    value={getInstruction(menuData._id)}
+                    onChange={(e) => handleItemInstruction(menuData._id, index, e.target.value)}
+                    placeholder="Add Instruction"
+                  />
+                  </div>
+                </div>
+                <div className='d-flex'>
+                  <p className='px-1'>€{(`${menuData.price}`).toLowerCase()}</p>
+                  <div className='addItemButton'>
+                  {
+                    (
+                      (findItem(menuData._id) && getQuantity(menuData._id)>0)
+                      ?
+                      <div className='countItemBtn d-flex justify-content-evenly'>
+                        <div className='minusBtn' onClick={() => reduceItem(menuData._id)} >
+                          -
+                        </div>
+                        <div>
+                        {getQuantity(menuData._id)}
+                        </div>
+                        <div onClick={() => increaseItem(menuData._id)}>
+                          +
+                        </div>
+                      </div>
+                      :
+                      <div className='bg_Success countItemBtn text-light text-center' onClick={() => addItem(menuData, index)}>
+                          +
+                      </div>
+                    )
+                  }
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
               <Row className='cardDetailContainer h-100 rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
                 <Col className='m-0 p-0 d-flex justify-content-center align-items-center' xs={3} sm={12}>
                   <div className='imageContainer'>
@@ -78,7 +125,8 @@ const MainMenu = (props) => {
                   }
                 </Col>
               </Row>
-            </Col>
+            </Col> */}
+          </>
           ))}
         </Row>
         <div className='d-flex justify-content-center text-center'>

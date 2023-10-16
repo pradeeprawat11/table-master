@@ -36,27 +36,27 @@ const CategoryMenu = (props) => {
       {
       !categoryLoading ?
       <>
-        <Row className='cardContainer p-0 m-0 mt-5 py-4 px-2 text-light'>
+        <Row className='cardContainer p-2 m-0'>
           {categoryData.map((menuData, index) =>(
-            <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
-              <Row className='cardDetailContainer h-100 rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
-                <Col className='m-0 p-0 d-flex justify-content-center align-items-center' xs={3} sm={12}>
-                  <div className='imageContainer'>
-                    <Image className='cardImage w-100 h-100' src="https://howtostartanllc.com/images/business-ideas/business-idea-images/fast-food.jpg" />
-                  </div>
-                </Col>
-                <Col className='itemDetailContainer' xs={6} sm={12}>
-                  <h5 className='p-0 m-0'>{(`${menuData.name}`).toLowerCase()}</h5>
-                  <p className='p-0 m-0'>€{(`${menuData.price}`).toLowerCase()}</p>
-                  <p className='p-0 m-0 colorLightGray'>{(`${menuData.description}`).toLowerCase()}</p>
-                  <input
+            <>
+              <div key={index} className='w-100 p-2'>
+              <div className='d-flex align-items-center justify-content-between'>
+                <div className='d-flex itemImgInfo'>
+                  <Image className='menuItemImage' src="https://howtostartanllc.com/images/business-ideas/business-idea-images/fast-food.jpg" />
+                  <div className='justify-content-between px-2'>
+                    <h5 className='m-0 p-0'>{(`${menuData.name}`).toLowerCase()}</h5>
+                    <p className='m-0 p-0'>{(`${menuData.description}`).toLowerCase()}</p>
+                    <input
                     type="text"
                     value={getInstruction(menuData._id)}
                     onChange={(e) => handleItemInstruction(menuData._id, index, e.target.value)}
                     placeholder="Add Instruction"
                   />
-                </Col>
-                <Col className='py-3' xs={3} sm={12}>
+                  </div>
+                </div>
+                <div className='d-flex'>
+                  <p className='px-1'>€{(`${menuData.price}`).toLowerCase()}</p>
+                  <div className='addItemButton'>
                   {
                     (
                       (findItem(menuData._id) && getQuantity(menuData._id)>0)
@@ -78,9 +78,54 @@ const CategoryMenu = (props) => {
                       </div>
                     )
                   }
-                </Col>
-              </Row>
-            </Col>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </>
+            // <Col key={index} className='p-2 ' xs={12} sm={6} md={4} lg={3} xl={2}>
+            //   <Row className='cardDetailContainer h-100 rounded bg_LightDark p-0 m-0 d-flex justify-content-center align-items-center'>
+            //     <Col className='m-0 p-0 d-flex justify-content-center align-items-center' xs={3} sm={12}>
+            //       <div className='imageContainer'>
+            //         <Image className='cardImage w-100 h-100' src="https://howtostartanllc.com/images/business-ideas/business-idea-images/fast-food.jpg" />
+            //       </div>
+            //     </Col>
+            //     <Col className='itemDetailContainer' xs={6} sm={12}>
+            //       <h5 className='p-0 m-0'>{(`${menuData.name}`).toLowerCase()}</h5>
+            //       <p className='p-0 m-0'>€{(`${menuData.price}`).toLowerCase()}</p>
+            //       <p className='p-0 m-0 colorLightGray'>{(`${menuData.description}`).toLowerCase()}</p>
+            //       <input
+            //         type="text"
+            //         value={getInstruction(menuData._id)}
+            //         onChange={(e) => handleItemInstruction(menuData._id, index, e.target.value)}
+            //         placeholder="Add Instruction"
+            //       />
+            //     </Col>
+            //     <Col className='py-3' xs={3} sm={12}>
+            //       {
+            //         (
+            //           (findItem(menuData._id) && getQuantity(menuData._id)>0)
+            //           ?
+            //           <div className='countItemBtn d-flex justify-content-evenly'>
+            //             <div className='minusBtn' onClick={() => reduceItem(menuData._id)} >
+            //               -
+            //             </div>
+            //             <div>
+            //             {getQuantity(menuData._id)}
+            //             </div>
+            //             <div onClick={() => increaseItem(menuData._id)}>
+            //               +
+            //             </div>
+            //           </div>
+            //           :
+            //           <div className='bg_Success countItemBtn text-light text-center' onClick={() => addItem(menuData, index)}>
+            //               +
+            //           </div>
+            //         )
+            //       }
+            //     </Col>
+            //   </Row>
+            // </Col>
           ))}
         </Row>
         <div className='d-flex justify-content-center text-center'>

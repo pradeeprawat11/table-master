@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Menu.css'
 import '../../index.css'
 import { Link } from 'react-router-dom'
-import { Container, Dropdown} from 'react-bootstrap'
+import { Col, Container, Dropdown, Image, Row} from 'react-bootstrap'
 import { LiaLessThanSolid } from 'react-icons/lia'
 import {GiShoppingCart} from 'react-icons/gi'
 import {MdRestaurantMenu} from 'react-icons/md'
@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import VerifyOrder from '../VerifyOrder/VerifyOrder';
 import MainMenu from './MainMenu/MainMenu';
 import CategoryMenu from './CategoryMenu/CategoryMenu';
+import Logo from '../Images/Table_Master_Logo.png'
 
 const Menu = () => {
 
@@ -271,10 +272,70 @@ const Menu = () => {
 
     return (
     <>
+    <Row className='bg-light h-min-100vh m-0 p-0'>
+      <div className='menuInfo border d-none d-sm-block justify-content-center'>
+        <div className='d-flex justify-content-center '>
+          <Image className='roomeatsLogo rounded-circle' src={Logo} />
+        </div>
+        <div>
+          <ul>
+            <li onClick={()=> showMenuByCategory('All')}>All</li>
+            {category.map((category)=> (
+              <li onClick={()=> showMenuByCategory(category)}>{category.name}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <Col className='m-0 p-0'>
+      {/* <div className='categoryContainer d-flex'>
+      {category.map((category)=> (
+        <div className=''>
+          <Image className='categoryItemLogo' src={Logo} />
+          <h6>{category.name}</h6>
+        </div>
+      ))}
+        
+      </div> */}
+      { selectedCategoryName==='Category' ?
+          <MainMenu 
+            getInstruction={getInstruction}
+            handleItemInstruction={handleItemInstruction}
+            findItem={findItem}
+            getQuantity={getQuantity}
+            reduceItem={reduceItem}
+            increaseItem={increaseItem}
+            addItem={addItem}
+            clearItems={clearItems}
+            placeOrder={placeOrder}
+            orderItems={orderItems}
+          />
+          :
+          <CategoryMenu 
+            getInstruction={getInstruction}
+            handleItemInstruction={handleItemInstruction}
+            findItem={findItem}
+            getQuantity={getQuantity}
+            reduceItem={reduceItem}
+            increaseItem={increaseItem}
+            clearItems={clearItems}
+            addItem={addItem}
+            placeOrder={placeOrder}
+            orderItems={orderItems}
+            selectedCategoryId={selectedCategoryId}
+            categoryItemPage={categoryItemPage}
+            loadNextCategoryPage={loadNextCategoryPage}
+          />
+        }
+      </Col>
+    </Row>
+    <div className='bg-light d-flex'>
+      
+      
+    </div>
     {!isViewItems ?
       <Container className='menuContainer text-light bg_Dark p-0 d-xs-flex' fluid>
         
-        <div className='fixedNavbar d-flex justify-content-between align-items-center'>
+        {/* <div className='fixedNavbar d-flex justify-content-between align-items-center'>
           <div className='d-flex text-light align-items-center py-2'>
             <Link to="/" className='text-light'>
               <div className='menuLogo d-flex align-items-center mx-3 p-2'>
@@ -313,7 +374,7 @@ const Menu = () => {
               <GiShoppingCart size={30} className='mx-2' />
             </div>}
           </div>
-        </div>
+        </div> */}
         <ToastContainer
           position='top-right'
           autoClose={5000}
@@ -326,7 +387,7 @@ const Menu = () => {
           pauseOnHover
           theme='light'
         />
-        { selectedCategoryName==='Category' ?
+        {/* { selectedCategoryName==='Category' ?
           <MainMenu 
             getInstruction={getInstruction}
             handleItemInstruction={handleItemInstruction}
@@ -355,7 +416,7 @@ const Menu = () => {
             categoryItemPage={categoryItemPage}
             loadNextCategoryPage={loadNextCategoryPage}
           />
-        }
+        } */}
       </Container >
       :
       <VerifyOrder className='d-md-none d-none' 

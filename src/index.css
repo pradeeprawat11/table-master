@@ -88,3 +88,27 @@ code {
 .h-full {
   height: 100vh;
 }
+
+.h-min-100vh {
+  min-height: 100vh;
+}
+
+.menuItemImage {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.categoryItemLogo {
+  height: 2rem;
+  width: 2rem;
+}
+
+.categoryContainer {
+  overflow: scroll;
+}
+
+ul {
+  list-style-type: none;
+}
