@@ -1,0 +1,16 @@
+.cardContainer {
+    /* position:fixed; */
+    overflow-y: scroll;
+    height: 100%;
+}
+
+.orderControlContainer {
+    position: absolute;
+    bottom: 2rem;
+    /* left: 50%; */
+}
+
+.menuContainer {
+    position: relative;
+    height: 100%;
+}

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Menu.css'
 import '../../index.css'
 import { Link } from 'react-router-dom'
-import { Col, Container, Dropdown, Image, Row} from 'react-bootstrap'
+import { Col, Container, Dropdown, Image, Row, Accordion, Card, Button, ListGroup} from 'react-bootstrap'
 import { LiaLessThanSolid } from 'react-icons/lia'
 import {GiShoppingCart} from 'react-icons/gi'
 import {MdRestaurantMenu} from 'react-icons/md'
@@ -14,6 +14,7 @@ import VerifyOrder from '../VerifyOrder/VerifyOrder';
 import MainMenu from './MainMenu/MainMenu';
 import CategoryMenu from './CategoryMenu/CategoryMenu';
 import Logo from '../Images/Table_Master_Logo.png'
+import { BsSearch } from 'react-icons/bs';
 
 const Menu = () => {
 
@@ -75,7 +76,7 @@ const Menu = () => {
     if(fetchLocalAllOrderItems) {
       setAllOrderItems(JSON.parse(fetchLocalAllOrderItems))
     }
-  },[category])
+  },[])
 
   const clearItems = () => {
     const updatedArray = [];
@@ -270,172 +271,111 @@ const Menu = () => {
       clearItems()
     }
 
+
     return (
     <>
-    <Row className='bg-light h-min-100vh m-0 p-0'>
-      <div className='menuInfo border d-none d-sm-block justify-content-center'>
-        <div className='d-flex justify-content-center '>
+    <Container className='menu-container h-full bg-light-gray p-2' fluid>
+      <div className='d-flex bg-light justify-content-between align-items-center rounded p-2'>
+        <div className='d-flex justify-content-center align-items-center'>
           <Image className='roomeatsLogo rounded-circle' src={Logo} />
+          <h4 className='m-0 px-2'>Table Master</h4>
         </div>
-        <div>
-          <ul>
-            <li onClick={()=> showMenuByCategory('All')}>All</li>
-            {category.map((category)=> (
-              <li onClick={()=> showMenuByCategory(category)}>{category.name}</li>
-            ))}
-          </ul>
+        <div className='search-container'>
+          <input placeholder='Search'/>
+          <BsSearch className='search-icon' />
         </div>
       </div>
-      <Col className='m-0 p-0'>
-      {/* <div className='categoryContainer d-flex'>
-      {category.map((category)=> (
-        <div className=''>
-          <Image className='categoryItemLogo' src={Logo} />
-          <h6>{category.name}</h6>
-        </div>
-      ))}
-        
-      </div> */}
-      { selectedCategoryName==='Category' ?
-          <MainMenu 
-            getInstruction={getInstruction}
-            handleItemInstruction={handleItemInstruction}
-            findItem={findItem}
-            getQuantity={getQuantity}
-            reduceItem={reduceItem}
-            increaseItem={increaseItem}
-            addItem={addItem}
-            clearItems={clearItems}
-            placeOrder={placeOrder}
-            orderItems={orderItems}
-          />
-          :
-          <CategoryMenu 
-            getInstruction={getInstruction}
-            handleItemInstruction={handleItemInstruction}
-            findItem={findItem}
-            getQuantity={getQuantity}
-            reduceItem={reduceItem}
-            increaseItem={increaseItem}
-            clearItems={clearItems}
-            addItem={addItem}
-            placeOrder={placeOrder}
-            orderItems={orderItems}
-            selectedCategoryId={selectedCategoryId}
-            categoryItemPage={categoryItemPage}
-            loadNextCategoryPage={loadNextCategoryPage}
-          />
-        }
-      </Col>
-    </Row>
-    <div className='bg-light d-flex'>
-      
-      
-    </div>
-    {!isViewItems ?
-      <Container className='menuContainer text-light bg_Dark p-0 d-xs-flex' fluid>
-        
-        {/* <div className='fixedNavbar d-flex justify-content-between align-items-center'>
-          <div className='d-flex text-light align-items-center py-2'>
-            <Link to="/" className='text-light'>
-              <div className='menuLogo d-flex align-items-center mx-3 p-2'>
-                <LiaLessThanSolid size={20} />
-              </div>
-            </Link>
-            <div>
-              <h4 className='m-0'>Room Eats Menu</h4>
+      <div className='variable-item-container'>
+        <Row className='m-0 p-0 h-100'>
+          <div className='menuInfo d-none d-sm-block justify-content-center p-2 h-100'>
+            <div className='sidebar-item-container bg-light h-100 rounded'>
+            <ListGroup>
+              <ListGroup.Item >Main Menu</ListGroup.Item>
+              <ListGroup.Item className='p-0'>
+                <Accordion className='' defaultActiveKey="0">
+                <Accordion.Item className='border-0 p-0 m-0' eventKey="0">
+                  <Accordion.Header>Category</Accordion.Header>
+                  <Accordion.Body>
+                  <div>
+                    <ul>
+                      <li onClick={()=> showMenuByCategory('All')}>All</li>
+                      {category.map((category)=> (
+                        <li onClick={()=> showMenuByCategory(category)}>{category.name}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  </Accordion.Body>
+                </Accordion.Item>
+                </Accordion></ListGroup.Item>
+              <ListGroup.Item>My Orders</ListGroup.Item>
+            </ListGroup>
             </div>
           </div>
-          <div className='d-flex align-items-center'>
-            <Dropdown className='bg-none borderSuccess'>
-              <Dropdown.Toggle variant='success' className="d-flex align-items-center categoryDropdown bold-text dropdown-basic bg-none border-2 border-success px-2 mx-2">
-                <MdRestaurantMenu className='mx-1' /> <span className='mx-1'> {selectedCategoryName} </span> 
-              </Dropdown.Toggle>
-              <Dropdown.Menu className='p-2'>
-                <Dropdown.Item className='' onClick={()=> showMenuByCategory('All')}>All</Dropdown.Item>
-                {
-                  categoryLoading 
-                  ?
-                  <p>Loading...</p>
-                  :
-                  <>
-                    {category.map((category, index)=>(
-                        <Dropdown.Item key={index} onClick={()=> showMenuByCategory(category)}>{category.name}</Dropdown.Item>
-                    ))}
-                  </>
-                }
-              </Dropdown.Menu>
-            </Dropdown>
-            {orderItems.length>0 && 
-            <div className='position-relative c-pointer' onClick={()=>placeOrder()}>
-              <div className='orderItemsCount position-absolute bg-danger'>
-                <p className='m-0 p-1'>{orderItems.length}</p>
+          <Col className='itemContainer h-100 m-0 bg-light-gray p-2'>
+            <Row className='nav-category-container m-0  bg-light rounded mb-1'>
+              <div className='categoryContainer rounded d-flex p-2 '>
+              {category.map((category)=> (
+                <div className='nav-category-item  border border-2 rounded border-dark p-1 m-1'>
+                  <span onClick={()=> showMenuByCategory(category)}>{category.name}</span>
+                </div>
+              ))}
               </div>
-              <GiShoppingCart size={30} className='mx-2' />
-            </div>}
-          </div>
-        </div> */}
-        <ToastContainer
-          position='top-right'
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme='light'
-        />
-        {/* { selectedCategoryName==='Category' ?
-          <MainMenu 
-            getInstruction={getInstruction}
-            handleItemInstruction={handleItemInstruction}
-            findItem={findItem}
-            getQuantity={getQuantity}
-            reduceItem={reduceItem}
-            increaseItem={increaseItem}
-            addItem={addItem}
-            clearItems={clearItems}
-            placeOrder={placeOrder}
-            orderItems={orderItems}
-          />
-          :
-          <CategoryMenu 
-            getInstruction={getInstruction}
-            handleItemInstruction={handleItemInstruction}
-            findItem={findItem}
-            getQuantity={getQuantity}
-            reduceItem={reduceItem}
-            increaseItem={increaseItem}
-            clearItems={clearItems}
-            addItem={addItem}
-            placeOrder={placeOrder}
-            orderItems={orderItems}
-            selectedCategoryId={selectedCategoryId}
-            categoryItemPage={categoryItemPage}
-            loadNextCategoryPage={loadNextCategoryPage}
-          />
-        } */}
-      </Container >
-      :
-      <VerifyOrder className='d-md-none d-none' 
-        orderItems={orderItems}
-        getInstruction={getInstruction}
-        handleItemInstruction={handleItemInstruction}
-        findItem={findItem}
-        getQuantity={getQuantity}
-        addItem={addItem}
-        reduceItem={reduceItem}
-        increaseItem={increaseItem}
-        confirmOrder={confirmOrder}
-        cancelOrder={cancelOrder}
-        clearItems={clearItems}
-        hideViewItems={hideViewItems}
-        allOrderItems={allOrderItems}
-        totalAmount={totalAmount}
-      />
-    }
+            </Row>
+            {!isViewItems ?
+            <>
+              { selectedCategoryName==='Category' ?
+                <MainMenu 
+                  getInstruction={getInstruction}
+                  handleItemInstruction={handleItemInstruction}
+                  findItem={findItem}
+                  getQuantity={getQuantity}
+                  reduceItem={reduceItem}
+                  addItem={addItem}
+                  increaseItem={increaseItem}
+                  clearItems={clearItems}
+                  placeOrder={placeOrder}
+                  orderItems={orderItems}
+                />
+                :
+                <CategoryMenu 
+                  getInstruction={getInstruction}
+                  handleItemInstruction={handleItemInstruction}
+                  findItem={findItem}
+                  getQuantity={getQuantity}
+                  reduceItem={reduceItem}
+                  increaseItem={increaseItem}
+                  clearItems={clearItems}
+                  addItem={addItem}
+                  placeOrder={placeOrder}
+                  orderItems={orderItems}
+                  selectedCategoryId={selectedCategoryId}
+                  categoryItemPage={categoryItemPage}
+                  loadNextCategoryPage={loadNextCategoryPage}
+                />
+              }
+            </>
+            :
+            <VerifyOrder className='d-md-none d-none' 
+              orderItems={orderItems}
+              getInstruction={getInstruction}
+              handleItemInstruction={handleItemInstruction}
+              findItem={findItem}
+              getQuantity={getQuantity}
+              addItem={addItem}
+              reduceItem={reduceItem}
+              increaseItem={increaseItem}
+              confirmOrder={confirmOrder}
+              cancelOrder={cancelOrder}
+              clearItems={clearItems}
+              hideViewItems={hideViewItems}
+              allOrderItems={allOrderItems}
+              totalAmount={totalAmount}
+            />
+          }
+          </Col>
+        </Row>
+      </div>
+    </Container>
     </>
   )
 }

@@ -15,7 +15,6 @@ const Home = () => {
             <Image className='pb-5' size={5} src={Logo} />
             <Link className='d-block' to="/menu"> <button className='bg_Success w-100 border-0 text-light p-2 px-5'>Order Now</button> </Link>
           </div>
-          
         </Container>
     </>
   )

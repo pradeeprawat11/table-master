@@ -106,9 +106,14 @@ code {
 }
 
 .categoryContainer {
-  overflow: scroll;
+  /* overflow: scroll; */
+  text-wrap: nowrap;  
 }
 
 ul {
   list-style-type: none;
+}
+
+.bg-light-gray {
+  background-color: #ececec;
 }
