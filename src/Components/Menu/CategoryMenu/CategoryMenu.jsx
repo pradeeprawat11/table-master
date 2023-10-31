@@ -12,7 +12,7 @@ const CategoryMenu = (props) => {
   const [categoryLoading, setCategoryLoading] = useState(true)
 
   useEffect(()=>{
-    const menuAPI = `http://194.163.149.48:3002/admin/menu/get-menu?pageNo=${categoryItemPage}&size=10&categoryId=${selectedCategoryId}`;
+    const menuAPI = `http://194.163.149.48:3002/admin/menu/get-menu-app?pageNo=${categoryItemPage}&size=10&categoryId=${selectedCategoryId}`;
     axios.get(menuAPI)
       .then((response) => {
         if(response.status===200) {
