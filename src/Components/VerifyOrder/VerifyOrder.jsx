@@ -13,16 +13,6 @@ const VerifyOrder = (props) => {
     
     return (
       <>
-            {/* <div className='fixedNavbar d-flex text-light align-items-center py-2'>
-              <Link onClick={()=> hideViewItems()} className='text-light'>
-                <div className='menuLogo d-flex align-items-center mx-3 p-2'>
-                  <LiaLessThanSolid size={20} />
-                </div>
-              </Link>
-              <div>
-                <h4 className='m-0'>Confirm Order</h4>
-              </div>
-            </div> */}
             <ToastContainer
             position='top-right'
             autoClose={5000}
@@ -89,10 +79,10 @@ const VerifyOrder = (props) => {
         <h6 className='text-center'>Please Select Items To Confirm Order</h6>
       </div>
       }
-      <div className='d-flex justify-content-center my-5' varient="bottom">
-        {totalAmount>0 &&  <Link className='no-underline' onClick={()=>hideViewItems()}> <button onClick={() => cancelOrder()} className='basicButton bg-danger border-danger countItemBtn text-light text-center'><MdCancel className='mx-1' />Cancel Order</button> </Link>}
-        <button onClick={() => hideViewItems()} className='basicButton add-more-item-btn bg-primary countItemBtn text-light border-primary text-center mx-3'> <AiOutlineAppstoreAdd className='mx-1' /> Add More Items</button>
-        {totalAmount>0 && <Link className='no-underline' > <button onClick={confirmOrder} className='basicButton bg_Success countItemBtn text-light text-center'>  <GiConfirmed className='mx-1' />Confirm Order {`€ (${totalAmount})`}</button> </Link>}
+      <div className='verify-btn-container d-sm-flex justify-content-center' varient="bottom">
+        {totalAmount>0 && <Link className='no-underline' > <button onClick={confirmOrder} className='basicButton verify-btn bg_Success countItemBtn text-light text-center d-flex justify-content-center m-3'>  <GiConfirmed className='mx-1' />Confirm Order {`€ (${totalAmount})`}</button> </Link>}
+        <button onClick={() => hideViewItems()} className='basicButton verify-btn add-more-item-btn bg-primary countItemBtn text-light border-primary text-center m-3 d-flex justify-content-center'> <AiOutlineAppstoreAdd className='mx-1' /> Add More Items</button>
+        {totalAmount>0 &&  <Link className='no-underline' onClick={()=>hideViewItems()}> <button onClick={() => cancelOrder()} className='basicButton verify-btn bg-danger border-danger countItemBtn text-light text-center d-flex justify-content-center m-3'><MdCancel className='mx-1' />Cancel Order</button> </Link>}
       </div>
       </Row>
       </>

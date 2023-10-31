@@ -1,8 +1,14 @@
 .verifyOrderContainer {
     position: relative;
     height: 100%;
+    overflow-y: scroll;
 }
 
 .add-more-item-btn {
     height: fit-content;
+}
+
+.verify-btn-container {
+    /* position: absolute; */
+    /* bottom: 10px; */
 }

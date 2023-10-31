@@ -148,6 +148,19 @@ input:focus {
     height: 100vh;
 }
 
+.mobile-sidebar {
+    height: 100vh;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+    padding-right: 30%;
+    background-color: rgba(0, 0, 0, 0.363);
+}
+
+.mobile-sidebar-item-container {
+    overflow-y: scroll;
+}
+
 .variable-item-container {
     height: 90%;
 }

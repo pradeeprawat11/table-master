@@ -5,7 +5,7 @@ import '../../index.css'
 import { Link } from 'react-router-dom'
 import { Col, Container, Dropdown, Image, Row, Accordion, Card, Button, ListGroup} from 'react-bootstrap'
 import { LiaLessThanSolid } from 'react-icons/lia'
-import {GiShoppingCart} from 'react-icons/gi'
+import {GiCrossMark, GiShoppingCart} from 'react-icons/gi'
 import {MdRestaurantMenu} from 'react-icons/md'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
@@ -14,7 +14,9 @@ import VerifyOrder from '../VerifyOrder/VerifyOrder';
 import MainMenu from './MainMenu/MainMenu';
 import CategoryMenu from './CategoryMenu/CategoryMenu';
 import Logo from '../Images/Table_Master_Logo.png'
-import { BsSearch } from 'react-icons/bs';
+import { BsMenuButton, BsSearch } from 'react-icons/bs';
+import {FiMenu} from 'react-icons/fi'
+import {RxCross1} from 'react-icons/rx'
 
 const Menu = () => {
 
@@ -28,6 +30,7 @@ const Menu = () => {
   const [isViewItems, setIsViewItems] = useState(false)
   const [allOrderItems, setAllOrderItems] = useState([])
   const [totalAmount, setTotalAmount] = useState(0)
+  const [showSidebar, setShowSidebar] = useState(false)
   const itemInstruction = []
 
   const navigate = useNavigate();
@@ -274,17 +277,56 @@ const Menu = () => {
 
     return (
     <>
-    <Container className='menu-container h-full bg-light-gray p-2' fluid>
-      <div className='d-flex bg-light justify-content-between align-items-center rounded p-2'>
+    <Container className='menu-container h-full bg-light-gray p-0 m-0' fluid>
+      <div className='d-flex bg-light justify-content-between align-items-center rounded m-2 p-2'>
         <div className='d-flex justify-content-center align-items-center'>
           <Image className='roomeatsLogo rounded-circle' src={Logo} />
           <h4 className='m-0 px-2'>Table Master</h4>
         </div>
-        <div className='search-container'>
+        <div className='search-container d-none d-sm-block'>
           <input placeholder='Search'/>
           <BsSearch className='search-icon' />
         </div>
+        {!showSidebar &&
+        <div className='d-block d-sm-none'>
+          <FiMenu onClick={()=>setShowSidebar(!showSidebar)} size="25"/>
+        </div>}
       </div>
+
+      {/* Sidebar for mobile */}
+      {showSidebar && 
+      <div className='mobile-sidebar'>
+        <div className='mobile-sidebar-item-container bg-light h-100 rounded p-2 py-4'>
+          <div className='d-flex justify-content-end bg-light pt-2'>
+            <RxCross1 size="25" onClick={()=>setShowSidebar(!showSidebar)} />
+          </div>
+          <div className='d-flex justify-content-center pb-3'>
+            <Image className='roomeatsLogo rounded-circle w-25 h-25' src={Logo} />
+          </div>
+            <ListGroup className='border-0'>
+              <ListGroup.Item >Main Menu</ListGroup.Item>
+              <ListGroup.Item className='p-0'>
+                <Accordion className='' defaultActiveKey="0">
+                <Accordion.Item className='border-0 p-0 m-0' eventKey="0">
+                  <Accordion.Header>Category</Accordion.Header>
+                  <Accordion.Body>
+                  <div>
+                    <ul>
+                      <li onClick={()=> showMenuByCategory('All')}>All</li>
+                      {category.map((category)=> (
+                        <li onClick={()=> showMenuByCategory(category)}>{category.name}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  </Accordion.Body>
+                </Accordion.Item>
+                </Accordion></ListGroup.Item>
+              <ListGroup.Item>My Orders</ListGroup.Item>
+            </ListGroup>
+        </div>
+      </div>
+      }
+
       <div className='variable-item-container'>
         <Row className='m-0 p-0 h-100'>
           <div className='menuInfo d-none d-sm-block justify-content-center p-2 h-100'>

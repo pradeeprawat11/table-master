@@ -117,3 +117,10 @@ ul {
 .bg-light-gray {
   background-color: #ececec;
 }
+
+@media (max-width: 576px) {
+  .verify-btn {
+    width: 80%;
+
+  }
+}
