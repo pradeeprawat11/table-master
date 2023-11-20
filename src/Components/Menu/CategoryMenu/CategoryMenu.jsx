@@ -34,7 +34,13 @@ const CategoryMenu = (props) => {
     setCategoryData([])
   }, [selectedCategoryId])
 
-  console.log('cat data', categoryData)
+  const capitalizeWords = (str) => {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
 
   return (
     <>
@@ -47,10 +53,11 @@ const CategoryMenu = (props) => {
               <div key={index} className='w-100 p-2'>
               <div className='d-flex align-items-center justify-content-between'>
                 <div className='d-flex itemImgInfo'>
-                  <Image className='menuItemImage' src="https://howtostartanllc.com/images/business-ideas/business-idea-images/fast-food.jpg" />
+                  {/* <Image className='menuItemImage' src="https://howtostartanllc.com/images/business-ideas/business-idea-images/fast-food.jpg" /> */}
+                  <img className='menuItemImage'  src={`${menuData.image}`}></img>
                   <div className='justify-content-between px-2'>
-                    <h5 className='m-0 p-0'>{(`${menuData.name}`).toLowerCase()}</h5>
-                    <p className='m-0 p-0'>{(`${menuData.description}`).toLowerCase()}</p>
+                  <h5 className='m-0 p-0'>{capitalizeWords(`${menuData.name}`)}</h5>
+                    <p className='m-0 p-0 text-description'>{capitalizeWords(`${menuData.description}`)}</p>
                     <input className="menu-input"
                     type="text"
                     value={getInstruction(menuData._id)}
