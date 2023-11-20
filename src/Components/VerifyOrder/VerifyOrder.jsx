@@ -36,7 +36,7 @@ const VerifyOrder = (props) => {
                   <div className='justify-content-between px-2'>
                     <h5 className='m-0 p-0'>{(`${orderItem.name}`).toLowerCase()}</h5>
                     <p className='m-0 p-0'>{(`${orderItem.description}`).toLowerCase()}</p>
-                    <input
+                    <input className="menu-input"
                     type="text"
                     value={getInstruction(orderItem._id)}
                     onChange={(e) => handleItemInstruction(orderItem._id, index, e.target.value)}

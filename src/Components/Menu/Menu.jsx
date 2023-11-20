@@ -38,7 +38,12 @@ const Menu = () => {
   const assetId = queryParameters.get("assetId")
 
   const fetchCategory = async () => {
-    const response = await fetch('http://194.163.149.48:3002/admin/item-category')
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: '' })
+  };
+    const response = await fetch('http://194.163.149.48:3002/admin/item-category/app',requestOptions)
     if (!response.ok) {
       throw new Error('Data coud not be fetched!')
     } else {
@@ -281,7 +286,7 @@ const Menu = () => {
       <div className='d-flex bg-light justify-content-between align-items-center rounded m-2 p-2'>
         <div className='d-flex justify-content-center align-items-center'>
           <Image className='roomeatsLogo rounded-circle' src={Logo} />
-          <h4 className='m-0 px-2'>Table Master</h4>
+          <h4 className='m-0 px-2'>Room Eats Order Reservation</h4>
         </div>
         <div className='search-container d-none d-sm-block'>
           <input placeholder='Search'/>
@@ -314,7 +319,7 @@ const Menu = () => {
                     <ul>
                       <li onClick={()=> showMenuByCategory('All')}>All</li>
                       {category.map((category)=> (
-                        <li onClick={()=> showMenuByCategory(category)}>{category.name}</li>
+                        <li onClick={()=> showMenuByCategory(category)}><Image className='categoryicon' src={category.image}/>{category.name}</li>
                       ))}
                     </ul>
                   </div>
@@ -340,9 +345,10 @@ const Menu = () => {
                   <Accordion.Body>
                   <div>
                     <ul>
-                      <li onClick={()=> showMenuByCategory('All')}>All</li>
+                      <li onClick={()=> showMenuByCategory('All')}></li>
                       {category.map((category)=> (
-                        <li onClick={()=> showMenuByCategory(category)}>{category.name}</li>
+                        <li onClick={()=> showMenuByCategory(category)}>   
+                        <Image className='categoryicon' src={category.image}/>{category.name}</li>
                       ))}
                     </ul>
                   </div>
@@ -357,7 +363,7 @@ const Menu = () => {
             <Row className='nav-category-container m-0  bg-light rounded mb-1'>
               <div className='categoryContainer rounded d-flex p-2 '>
               {category.map((category)=> (
-                <div className='nav-category-item  border border-2 rounded border-dark p-1 m-1'>
+                <div className='nav-category-item  border border-2 rounded p-1 m-1'>
                   <span onClick={()=> showMenuByCategory(category)}>{category.name}</span>
                 </div>
               ))}

@@ -11,9 +11,11 @@ const MainMenu = (props) => {
   const [menuData, setMenuData] = useState([])
   const [menuPage, setMenuPage] = useState(1)
   const [menuLoading, setMenuLoading] = useState(true)
+  const queryParameters = new URLSearchParams(window.location.search)
+  const assetId = queryParameters.get("assetId")
 
   useEffect(()=>{
-    const menuAPI = `http://194.163.149.48:3002/admin/menu/get-menu-app?pageNo=${menuPage}&size=10`;
+    const menuAPI = `http://194.163.149.48:3002/admin/menu/get-menu-app?pageNo=${menuPage}&assetId=${assetId}&size=10`;
     axios.get(menuAPI)
       .then((response) => {
         if(response.status===200) {
@@ -31,6 +33,14 @@ const MainMenu = (props) => {
       });
   },[menuPage])
 
+  const capitalizeWords = (str) => {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   const loadMoreItem = () => {
     setMenuPage(menuPage+1)
   }
@@ -46,11 +56,12 @@ const MainMenu = (props) => {
             <div key={index} className='w-100 p-2 m-0'>
               <div className='d-flex align-items-center justify-content-between'>
                 <div className='d-flex itemImgInfo'>
-                  <Image className='menuItemImage' src="https://howtostartanllc.com/images/business-ideas/business-idea-images/fast-food.jpg" />
+                  {/* <Image className='menuItemImage' src="https://howtostartanllc.com/images/business-ideas/business-idea-images/fast-food.jpg" /> */}
+                  <img className='menuItemImage'  src={`${menuData.image}`}></img>
                   <div className='justify-content-between px-2'>
-                    <h5 className='m-0 p-0'>{(`${menuData.name}`).toLowerCase()}</h5>
-                    <p className='m-0 p-0'>{(`${menuData.description}`).toLowerCase()}</p>
-                    <input
+                    <h5 className='m-0 p-0'>{capitalizeWords(`${menuData.name}`)}</h5>
+                    <p className='m-0 p-0 text-description'>{capitalizeWords(`${menuData.description}`)}</p>
+                    <input className="menu-input"
                     type="text"
                     value={getInstruction(menuData._id)}
                     onChange={(e) => handleItemInstruction(menuData._id, index, e.target.value)}

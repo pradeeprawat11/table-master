@@ -114,8 +114,24 @@ ul {
   list-style-type: none;
 }
 
+li {
+  list-style: none;
+  position: relative;
+  padding: 10px 0 0 0px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 10px solid #f9dd94;
+}
+
 .bg-light-gray {
   background-color: #ececec;
+}
+
+.categoryicon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 5px;
+    object-fit: cover;
 }
 
 @media (max-width: 576px) {

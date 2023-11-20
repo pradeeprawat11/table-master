@@ -10,9 +10,11 @@ const CategoryMenu = (props) => {
   const {getInstruction, handleItemInstruction, findItem, getQuantity, reduceItem, increaseItem, addItem, clearItems, placeOrder, orderItems, selectedCategoryId, categoryItemPage, loadNextCategoryPage} = props;
   const [categoryData, setCategoryData] = useState([])
   const [categoryLoading, setCategoryLoading] = useState(true)
+  const queryParameters = new URLSearchParams(window.location.search)
+  const assetId = queryParameters.get("assetId")
 
   useEffect(()=>{
-    const menuAPI = `http://194.163.149.48:3002/admin/menu/get-menu-app?pageNo=${categoryItemPage}&size=10&categoryId=${selectedCategoryId}`;
+    const menuAPI = `http://194.163.149.48:3002/admin/menu/get-menu-app?pageNo=${categoryItemPage}&assetId=${assetId}&size=10&categoryId=${selectedCategoryId}`;
     axios.get(menuAPI)
       .then((response) => {
         if(response.status===200) {
@@ -49,7 +51,7 @@ const CategoryMenu = (props) => {
                   <div className='justify-content-between px-2'>
                     <h5 className='m-0 p-0'>{(`${menuData.name}`).toLowerCase()}</h5>
                     <p className='m-0 p-0'>{(`${menuData.description}`).toLowerCase()}</p>
-                    <input
+                    <input className="menu-input"
                     type="text"
                     value={getInstruction(menuData._id)}
                     onChange={(e) => handleItemInstruction(menuData._id, index, e.target.value)}
